@@ -2,7 +2,7 @@
 const pageData = {
   title: 'Nos pâtisseries',
   backLink: {
-    href: '../../O2Passions.html',
+    href: '../O2Passions.html',
     label: 'Retourner à la page précédente'
   },
   heroImage: {
