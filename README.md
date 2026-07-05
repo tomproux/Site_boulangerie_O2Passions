@@ -1,30 +1,8 @@
 # Site de la boulangerie "Ô2 Passions" #
 
-### Page Principale ###
-
-###### Page d'accueil ######
-
-    Horaires
-    Evènements
+### Partie Front-end ###
 
 
-###### Page Viennoiseries ######
 
-    Page_Viennoiseries/README.md
+### Partie Back-end ###
 
-###### Page Pains ######
-
-    Page_Pains/README.md
-
-###### Page Pâtisseries ######
-
-    Page_Patisseries/README.md
-
-###### Page Ventes additionnels ######
-
-    Page_Ventes_additionnels/README.md
-
-###### Contacts ######
-
-    Facebook
-    Instagram
