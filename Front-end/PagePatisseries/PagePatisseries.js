@@ -73,7 +73,7 @@ const pageData = {
         {
           name: 'Tarte fraises',
           image: {
-            src: 'ImagesPatisseries/tarteFraise.png',
+            src: 'ImagesPatisseries/tarteFraises.png',
             alt: 'Tarte fraises',
             width: 150,
             height: 150
