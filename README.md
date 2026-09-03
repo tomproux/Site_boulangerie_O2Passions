@@ -33,7 +33,7 @@ L'objectif du MVP est de proposer une version simple, fonctionnelle et evolutive
   - Administrateur: Consulte l'etat general du systeme et peut gerer les utilisateurs si cette fonctionnalite est activée.
 
 --------------------------------------------------------------------------------
-1.3 Perimetre du MVP
+1.3 Périmètre du MVP
 --------------------------------------------------------------------------------
 Inclus dans le MVP :
   - Authentification par adresse e-mail et mot de passe
@@ -168,8 +168,8 @@ prevues pour les ecrans principaux.
 --------------------------------------------------------------------------------
 3.1 Ecran de connexion
 --------------------------------------------------------------------------------
-    +--------------------------------------+
-    |              TASKFLOW                |
+    +---------------------------------------+
+    |              TASKFLOW                 |
     |                                       |
     |  Adresse e-mail                       |
     |  [____________________________]       |
@@ -180,7 +180,7 @@ prevues pour les ecrans principaux.
     |          [ Se connecter ]             |
     |                                       |
     |  Creer un compte                      |
-    +--------------------------------------+
+    +---------------------------------------+
 
 --------------------------------------------------------------------------------
 3.2 Tableau de bord
