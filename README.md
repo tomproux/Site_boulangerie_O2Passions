@@ -21,9 +21,9 @@ L'objectif du MVP est de proposer une version simple, fonctionnelle et evolutive
   - Consultation du catalogue des produits proposés par la boulangerie "Ô2 Passions"
   - Passage de commande en ligne avec un système de paniers
 
-Notes:
-    --> Pour la partie consultation il y aura une partie visuelle sur les différents produits (viennoiseries, pains, pâtisseries et ventes additionnelles) à partir de différents onglets.
-    --> Pour la partie commande, il y aura un compte pour chaque utilisateur sur lequel ils pourront passer commande à partir du catalogue de produit.
+    Notes:
+      - Pour la partie consultation il y aura une partie        visuelle sur les différents produits (viennoiseries, pains, pâtisseries et ventes additionnelles) à partir de différents onglets.
+      - Pour la partie commande, il y aura un compte pour chaque utilisateur sur lequel ils pourront passer commande à partir du catalogue de produit.
 
 
 --------------------------------------------------------------------------------
