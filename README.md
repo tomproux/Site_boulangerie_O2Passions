@@ -73,41 +73,31 @@ Exclu du MVP :
     - L'utilisateur est redirigé vers son espace client
     - Un message d'erreur apparait si les identifiants sont incorrects
 
-[US-03] Creer une tache
-  En tant qu'utilisateur connecte, je veux creer une tache, afin d'organiser
-  mon travail.
-  Criteres d'acceptation :
-    - Le titre de la tache est obligatoire
-    - La description est facultative
-    - Le statut par defaut est TODO
-    - La priorite par defaut est MEDIUM
-    - La tache est associee a l'utilisateur connecte
+[US-03] Créer une commande
+  En tant qu'utilisateur connecté, je veux créer une commande, afin d'organiser mon travail.
+  Critères d'acceptation :
+    - Le produit est disponible dans le catalogue des produits du magasin
+    - Le nombre de personnes doit être indiqué
+    - La date ainsi que l'heure de la commande doivent être indiquées
+    - La commande doit être effectuer 48h avant la récupération de celle-ci
 
-[US-04] Consulter mes taches
-  En tant qu'utilisateur connecte, je veux consulter mes taches, afin de
-  connaitre les elements a realiser.
-  Criteres d'acceptation :
-    - Seules les taches de l'utilisateur connecte sont affichees
-    - Les taches sont triees par date de creation
-    - Le titre, le statut, la priorite et la date de creation sont visibles
-    - Un message est affiche si aucune tache n'existe
+[US-04] Consulter mon panier
+  En tant qu'utilisateur connecté, je veux consulter mon panier, afin de connaitre les commandes réalisées.
+  Critères d'acceptation :
+    - Un panier est créé si le nombre de commandes est supérieur ou égale à 1
+    - Le panier est consultable seulement par l'utilisateur l'ayant créé
 
-[US-05] Modifier une tache
-  En tant qu'utilisateur connecte, je veux modifier une tache, afin de
-  maintenir ses informations a jour.
+[US-05] Modifier une commande
+  En tant qu'utilisateur connecté, je veux modifier une commande, afin de modifier les commandes qui ne me plaisent plus.
   Criteres d'acceptation :
-    - L'utilisateur peut modifier le titre et la description
-    - L'utilisateur peut modifier le statut et la priorite
-    - Une tache appartenant a un autre utilisateur ne peut pas etre modifiee
-    - Les modifications sont enregistrees en base de donnees
+    - Avoir cette commande dans son panier
+    - Le faire 48h avant la réception de la commande
 
-[US-06] Supprimer une tache
-  En tant qu'utilisateur connecte, je veux supprimer une tache, afin de
-  retirer les elements devenus inutiles.
+[US-06] Supprimer une commande
+  En tant qu'utilisateur connecté, je veux supprimer une commande, afin de retirer les commandes que je ne souhaitent plus.
   Criteres d'acceptation :
-    - Une confirmation est demandee avant la suppression
-    - La tache est supprimee uniquement si elle appartient a l'utilisateur
-    - La tache ne s'affiche plus apres sa suppression
+    - Avoir cette commande dans son panier
+    - Le faire 48h avant la réception de la commande
 
 --------------------------------------------------------------------------------
 2.2 SHOULD HAVE - Important
