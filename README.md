@@ -42,9 +42,9 @@ Inclus dans le MVP :
   - Gestion des commandes via un panier
 
 Exclu du MVP :
+  - Paiement en ligne
   - Application mobile (extension future)
   - Notifications push (extension future)
-  - Paiement en ligne
 
 
 ================================================================================
@@ -55,23 +55,22 @@ Exclu du MVP :
 2.1 MUST HAVE - Indispensable
 --------------------------------------------------------------------------------
 
-[US-01] Creation de compte
-  En tant que visiteur, je veux creer un compte, afin d'acceder a
-  l'application.
-  Criteres d'acceptation :
-    - L'utilisateur saisit son nom, son adresse e-mail et son mot de passe
-    - L'adresse e-mail doit etre valide et unique
-    - Le mot de passe doit respecter les regles de securite definies
-    - Un compte est cree lorsque les donnees sont valides
-    - Une erreur explicite est affichee en cas de donnees invalides
+[US-01] Création de compte
+  En tant qu'utilisateur, je veux creer un compte, afin d'accéder à l'application.
+  Critères d'acceptation :
+    - L'utilisateur saisit son prénom, son nom, son adresse e-mail et son mot de passe
+    - L'adresse e-mail doit être validé et unique
+    - Le mot de passe doit respecter les règles de sécurité definies
+    - Un compte est créé lorsque les données sont valides
+    - Une erreur explicite est affichée en cas de données invalides
 
 [US-02] Connexion
-  En tant qu'utilisateur, je veux me connecter, afin d'acceder a mes taches.
-  Criteres d'acceptation :
+  En tant qu'utilisateur, je veux me connecter, afin d'accéder à mon espace client.
+  Critères d'acceptation :
     - L'utilisateur saisit son adresse e-mail et son mot de passe
-    - Les identifiants sont verifies par le back-end
-    - Un jeton d'authentification est retourne en cas de succes
-    - L'utilisateur est redirige vers son tableau de bord
+    - Les identifiants sont verifiés par le back-end
+    - Un jeton d'authentification est retourné en cas de succès
+    - L'utilisateur est redirigé vers son espace client
     - Un message d'erreur apparait si les identifiants sont incorrects
 
 [US-03] Creer une tache
