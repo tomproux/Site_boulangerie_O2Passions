@@ -1,15 +1,9 @@
 ================================================================================
-                    DOCUMENTATION TECHNIQUE - EXEMPLE DE MVP
-                              PROJET : TASKFLOW
+                           DOCUMENTATION TECHNIQUE
+                        PROJET : Site Web Ô2 Passions
 ================================================================================
 
-Application web de gestion de taches permettant a un utilisateur de creer,
-organiser et suivre ses taches personnelles.
-
-Ce document constitue un exemple adaptable a votre propre projet. Les
-technologies et fonctionnalites pourront etre modifiees selon les besoins
-reels.
-
+Cette documentation technique montre les différents point de la fabrication du Site Web “Ô2 Passions”.
 
 ================================================================================
 1. PRESENTATION DU PROJET
@@ -18,23 +12,19 @@ reels.
 --------------------------------------------------------------------------------
 1.1 Objectif
 --------------------------------------------------------------------------------
-TaskFlow permet aux utilisateurs de centraliser leurs taches, de leur
-attribuer un statut et une priorite, puis de suivre leur progression depuis
-un tableau de bord.
+L’idée principale retenue de ce projet consiste à la création d’un site web de consultation et de commande en ligne pour la boulangerie “Ô2 Passions”.
 
-L'objectif du MVP est de proposer une version simple, fonctionnelle et
-evolutive avec les fonctionnalites essentielles :
+L'objectif du MVP est de proposer une version simple, fonctionnelle et evolutive avec les fonctionnalités essentielles :
 
-  - Creation de compte et connexion
-  - Creation, consultation, modification et suppression de taches
-  - Attribution d'une priorite et d'un statut
-  - Filtrage des taches
-  - Persistance des donnees dans une base de donnees
-  - API REST documentee
+  - Creation de compte client
+  - Connexion à l'aide de l'identifiant et du mot de passe du compte client 
+  - Consultation du catalogue des produits proposés par la boulangerie "Ô2 Passions"
+  - Passage de commande en ligne avec un système de paniers
 
-Note : les User Stories decrivent une fonctionnalite du point de vue de
-l'utilisateur, selon le format "En tant que..., je veux..., afin de...".
-(source : atlassian.com/agile/project-management/user-stories)
+    Note : 
+      --> Pour la partie consultation il y aura une partie visuelle sur les différents produits (viennoiseries, pains, pâtisseries et ventes additionnelles) à partir de différents onglets.
+      --> Pour la partie commande, il y aura un compte pour chaque utilisateur sur lequel ils pourront passer commande à partir du catalogue de produit.
+
 
 --------------------------------------------------------------------------------
 1.2 Types d'utilisateurs
