@@ -16,25 +16,21 @@ L’idée principale retenue de ce projet consiste à la création d’un site w
 
 L'objectif du MVP est de proposer une version simple, fonctionnelle et evolutive avec les fonctionnalités essentielles :
 
-  - Creation de compte client
+  - Création de compte client
   - Connexion à l'aide de l'identifiant et du mot de passe du compte client 
   - Consultation du catalogue des produits proposés par la boulangerie "Ô2 Passions"
   - Passage de commande en ligne avec un système de paniers
 
     Notes:
-      - Pour la partie consultation il y aura une partie        visuelle sur les différents produits (viennoiseries, pains, pâtisseries et ventes additionnelles) à partir de différents onglets.
+      - Pour la partie consultation il y aura une partie    visuelle sur les différents produits (viennoiseries, pains, pâtisseries et ventes additionnelles) à partir de différents onglets.
       - Pour la partie commande, il y aura un compte pour chaque utilisateur sur lequel ils pourront passer commande à partir du catalogue de produit.
 
 
 --------------------------------------------------------------------------------
 1.2 Types d'utilisateurs
 --------------------------------------------------------------------------------
-  Utilisateur connecte  : Cree, consulte, modifie et supprime ses taches.
-  Administrateur        : Consulte l'etat general du systeme et peut gerer
-                          les utilisateurs si cette fonctionnalite est
-                          activee.
-  Visiteur              : Accede a la page d'accueil et peut se connecter
-                          ou creer un compte.
+  - Utilisateur: Crée un compte, consulte le catalogue des produits, passe une commande, modifie une commande, la supprimme une commande
+  - Administrateur: Consulte l'etat general du systeme et peut gerer les utilisateurs si cette fonctionnalite est activée.
 
 --------------------------------------------------------------------------------
 1.3 Perimetre du MVP
