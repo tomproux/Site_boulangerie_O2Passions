@@ -37,18 +37,13 @@ L'objectif du MVP est de proposer une version simple, fonctionnelle et evolutive
 --------------------------------------------------------------------------------
 Inclus dans le MVP :
   - Authentification par adresse e-mail et mot de passe
-  - Gestion des taches personnelles
-  - Tableau de bord
-  - API REST
-  - Tests automatises
-  - Deploiement en staging et en production
+  - Gestion des utilisateurs
+  - Aperçu du catalogue des produits
+  - Gestion des commandes via un panier
 
 Exclu du MVP :
-  - Application mobile native
-  - Collaboration en temps reel
-  - Notifications push
-  - Gestion avancee de projets
-  - Integration avec Slack ou Microsoft Teams
+  - Application mobile (extension future)
+  - Notifications push (extension future)
   - Paiement en ligne
 
 
