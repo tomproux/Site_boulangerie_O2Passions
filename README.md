@@ -1,1153 +1,775 @@
-================================================================================
-                           DOCUMENTATION TECHNIQUE
-                        PROJET : SITE WEB O2 PASSIONS
-================================================================================
-
-Site web de consultation et de commande en ligne pour la boulangerie
-"O2 Passions".
-
-Cette documentation reprend le contenu fourni (presentation du projet et
-User Stories) et le complete avec les elements techniques necessaires a la
-realisation du MVP : maquettes, architecture, modele de donnees, diagrammes
-de sequence, specifications API, strategies SCM et QA. Les choix
-technologiques proposes sont des exemples adaptables selon les contraintes
-reelles du projet.
-
-
-================================================================================
-1. PRESENTATION DU PROJET
-================================================================================
-
---------------------------------------------------------------------------------
-1.1 Objectif
---------------------------------------------------------------------------------
-L'idee principale retenue pour ce projet consiste en la creation d'un site
-web de consultation et de commande en ligne pour la boulangerie
-"O2 Passions".
-
-L'objectif du MVP est de proposer une version simple, fonctionnelle et
-evolutive avec les fonctionnalites essentielles :
-
-  - Creation de compte client
-  - Connexion a l'aide de l'identifiant et du mot de passe du compte client
-  - Consultation du catalogue des produits proposes par la boulangerie
-    "O2 Passions"
-  - Passage de commande en ligne avec un systeme de panier
-
-Notes :
-  - Pour la partie consultation, une presentation visuelle des differents
-    produits (viennoiseries, pains, patisseries et ventes additionnelles)
-    sera organisee par onglets.
-  - Pour la partie commande, chaque utilisateur dispose d'un compte lui
-    permettant de passer commande a partir du catalogue de produits.
-
---------------------------------------------------------------------------------
-1.2 Types d'utilisateurs
---------------------------------------------------------------------------------
-  Utilisateur     : Cree un compte, consulte le catalogue des produits,
-                    passe une commande, modifie une commande, supprime une
-                    commande.
-  Administrateur  : Consulte l'etat general du systeme et peut gerer les
-                    utilisateurs si cette fonctionnalite est activee.
-
---------------------------------------------------------------------------------
-1.3 Perimetre du MVP
---------------------------------------------------------------------------------
-Inclus dans le MVP :
-  - Authentification par adresse e-mail et mot de passe
-  - Gestion des utilisateurs
-  - Apercu du catalogue des produits
-  - Gestion des commandes via un panier
-
-Exclu du MVP :
-  - Paiement en ligne (extension future)
-  - Application mobile (extension future)
-  - Notifications push (extension future)
-
-
-================================================================================
-2. USER STORIES ET PRIORISATION
-================================================================================
-
---------------------------------------------------------------------------------
-2.1 MUST HAVE - Indispensable
---------------------------------------------------------------------------------
-
-[US-01] Creation de compte
-  En tant qu'utilisateur, je veux creer un compte, afin d'acceder a
-  l'application.
-  Criteres d'acceptation :
-    - L'utilisateur saisit son prenom, son nom, son adresse e-mail et son
-      mot de passe
-    - L'adresse e-mail doit etre validee et unique
-    - Le mot de passe doit respecter les regles de securite definies
-    - Un compte est cree lorsque les donnees sont valides
-    - Une erreur explicite est affichee en cas de donnees invalides
-
-[US-02] Connexion
-  En tant qu'utilisateur, je veux me connecter, afin d'acceder a mon
-  espace client.
-  Criteres d'acceptation :
-    - L'utilisateur saisit son adresse e-mail et son mot de passe
-    - Les identifiants sont verifies par le back-end
-    - Un jeton d'authentification est retourne en cas de succes
-    - L'utilisateur est redirige vers son espace client
-    - Un message d'erreur apparait si les identifiants sont incorrects
-
-[US-03] Creer une commande
-  En tant qu'utilisateur connecte, je veux creer une commande, afin
-  d'organiser mon travail.
-  Criteres d'acceptation :
-    - Le produit est disponible dans le catalogue des produits du magasin
-    - Le nombre de personnes doit etre indique
-    - La date ainsi que l'heure de la commande doivent etre indiquees
-    - La commande doit etre effectuee 48h avant la recuperation de
-      celle-ci
-
-[US-04] Consulter mon panier
-  En tant qu'utilisateur connecte, je veux consulter mon panier, afin de
-  connaitre les commandes realisees.
-  Criteres d'acceptation :
-    - Un panier est cree si le nombre de commandes est superieur ou egal
-      a 1
-    - Le panier est consultable seulement par l'utilisateur l'ayant cree
-
-[US-05] Modifier une commande
-  En tant qu'utilisateur connecte, je veux modifier une commande, afin de
-  modifier les commandes qui ne me plaisent plus.
-  Criteres d'acceptation :
-    - Avoir cette commande dans son panier
-    - Le faire 48h avant la reception de la commande
-
-[US-06] Supprimer une commande
-  En tant qu'utilisateur connecte, je veux supprimer une commande, afin
-  de retirer les commandes que je ne souhaite plus.
-  Criteres d'acceptation :
-    - Avoir cette commande dans son panier
-    - Le faire 48h avant la reception de la commande
-
---------------------------------------------------------------------------------
-2.2 SHOULD HAVE - Important
---------------------------------------------------------------------------------
-
-[US-07] Rechercher une commande
-  En tant qu'utilisateur connecte, je veux rechercher une commande par son
-  titre, afin de la retrouver rapidement.
-  Criteres d'acceptation :
-    - La recherche s'effectue parmi les commandes du panier de
-      l'utilisateur connecte
-    - Le resultat s'affiche des la saisie des premieres lettres
-
-[US-08] Consulter les commandes deja passees
-  En tant qu'utilisateur connecte, je veux voir les commandes precedemment
-  effectuees.
-  Criteres d'acceptation :
-    - Seules les commandes de l'utilisateur connecte sont affichees
-    - Les commandes sont triees par date, de la plus recente a la plus
-      ancienne
-
---------------------------------------------------------------------------------
-2.3 COULD HAVE - Souhaitable
---------------------------------------------------------------------------------
-
-[US-09] Ajouter une date limite
-  En tant qu'utilisateur connecte, je veux ajouter une date limite a une
-  commande, afin de mieux planifier celle-ci.
-  Criteres d'acceptation :
-    - La date limite doit respecter le delai de 48h avant la reception
-      de la commande
-
-[US-10] Paiement en ligne
-  En tant qu'utilisateur connecte, je veux avoir acces a un paiement en
-  ligne, afin de pouvoir payer a l'avance.
-
---------------------------------------------------------------------------------
-2.4 WON'T HAVE - Hors perimetre du MVP
---------------------------------------------------------------------------------
-
-[US-11] Application mobile
-  En tant qu'utilisateur, je veux avoir acces a une application mobile,
-  afin que le passage de commande puisse etre effectue depuis un
-  smartphone.
-  --> Fonctionnalite volontairement exclue de la premiere version.
-
-[US-12] Notifications en temps reel
-  En tant qu'utilisateur, je veux recevoir des notifications en temps
-  reel, afin d'etre informe immediatement des changements.
-  --> Fonctionnalite pouvant etre etudiee dans une version ulterieure.
-
-
-================================================================================
-3. MAQUETTES DES ECRANS
-================================================================================
-
-Le MVP possede une interface web. Des maquettes basse fidelite sont donc
-prevues pour les ecrans principaux.
-
---------------------------------------------------------------------------------
-3.1 Ecran de connexion
---------------------------------------------------------------------------------
-    +--------------------------------------+
-    |             O2 PASSIONS               |
-    |                                       |
-    |  Adresse e-mail                       |
-    |  [____________________________]       |
-    |                                       |
-    |  Mot de passe                         |
-    |  [____________________________]       |
-    |                                       |
-    |          [ Se connecter ]             |
-    |                                       |
-    |  Creer un compte                      |
-    +--------------------------------------+
-
---------------------------------------------------------------------------------
-3.2 Catalogue des produits
---------------------------------------------------------------------------------
-    +------------------------------------------------+
-    | O2 PASSIONS         Bonjour, Alice   Deconnexion|
-    +------------------------------------------------+
-    | [Viennoiseries] [Pains] [Patisseries] [Ventes   |
-    |                                    additionnelles]|
-    |                                                  |
-    |  +-----------+  +-----------+  +-----------+     |
-    |  | Croissant |  | Pain au   |  | Chausson  |     |
-    |  | 1,20 EUR  |  | chocolat  |  | aux pommes|     |
-    |  |[Ajouter]  |  | 1,30 EUR  |  | 1,50 EUR  |     |
-    |  |           |  |[Ajouter]  |  |[Ajouter]  |     |
-    |  +-----------+  +-----------+  +-----------+     |
-    |                                                  |
-    |                          [ Voir mon panier (3) ] |
-    +------------------------------------------------+
-
---------------------------------------------------------------------------------
-3.3 Panier / formulaire de commande
---------------------------------------------------------------------------------
-    +--------------------------------------+
-    | Mon panier                            |
-    |                                       |
-    | Produit           Nb pers.  Retrait   |
-    | Croissant x4        4      12/09 08h  | [Modifier][Suppr.]
-    | Tarte aux fraises   6      13/09 10h  | [Modifier][Suppr.]
-    |                                       |
-    | Nouvelle ligne de commande :          |
-    | Produit *                             |
-    | [ Selectionner un produit      v ]    |
-    | Nombre de personnes *                 |
-    | [____]                                |
-    | Date de retrait *      Heure *        |
-    | [__/__/____]            [__:__]       |
-    |                                       |
-    | [ Annuler ]        [ Valider commande]|
-    +--------------------------------------+
-    Note : la date/heure de retrait doit se situer au moins 48h apres la
-    validation de la commande ; un message d'erreur est affiche sinon.
-
---------------------------------------------------------------------------------
-3.4 Espace client - historique des commandes
---------------------------------------------------------------------------------
-    +------------------------------------------------+
-    | O2 PASSIONS         Bonjour, Alice   Deconnexion|
-    +------------------------------------------------+
-    | Mes commandes                                   |
-    |                                                  |
-    | [Rechercher_____________]                        |
-    |                                                  |
-    | Produit          Retrait      Statut             |
-    | Croissant x4     12/09 08h    A venir            |
-    | Baguette x2      05/09 09h    Recuperee          |
-    +------------------------------------------------+
-
---------------------------------------------------------------------------------
-3.5 Composants front-end
---------------------------------------------------------------------------------
-  - App             : composant racine de l'application
-  - Navbar          : navigation et deconnexion
-  - LoginForm       : formulaire de connexion
-  - RegisterForm    : formulaire d'inscription
-  - CatalogPage     : affichage du catalogue par onglets de categorie
-  - CategoryTabs    : onglets Viennoiseries / Pains / Patisseries /
-                      Ventes additionnelles
-  - ProductCard     : representation individuelle d'un produit
-  - CartPage        : affichage du panier de l'utilisateur
-  - CartItem        : ligne de commande dans le panier
-  - OrderForm       : creation ou modification d'une ligne de commande
-  - OrderHistory    : historique des commandes passees
-  - Toast           : affichage des messages de succes ou d'erreur
-  - ProtectedRoute  : protection des pages necessitant une authentification
-
-Interactions principales :
-  1. LoginForm envoie les identifiants au service d'authentification.
-  2. CatalogPage demande la liste des produits au back-end.
-  3. ProductCard ajoute un produit au panier via OrderForm.
-  4. OrderForm valide la regle des 48h avant d'envoyer la commande.
-  5. CartPage actualise l'affichage apres une operation reussie.
-
-
-================================================================================
-4. ARCHITECTURE DU SYSTEME
-================================================================================
-
---------------------------------------------------------------------------------
-4.1 Technologies retenues (proposition)
---------------------------------------------------------------------------------
-  Front-end         : React avec TypeScript
-                        -> Interface utilisateur interactive (catalogue,
-                           panier, espace client)
-  Back-end          : Node.js avec Express
-                        -> API REST et logique metier (regle des 48h,
-                           gestion du panier)
-  Base de donnees   : PostgreSQL
-                        -> Stockage structure des utilisateurs, produits
-                           et commandes
-  Authentification  : JWT avec mots de passe haches
-                        -> Identification securisee des clients
-  Tests front-end   : Jest et React Testing Library
-  Tests API         : Jest / Supertest et Postman
-  Deploiement       : Docker et GitHub Actions
-
---------------------------------------------------------------------------------
-4.2 Diagramme d'architecture
---------------------------------------------------------------------------------
-Vue simplifiee :
-
-    Client (navigateur) --(HTTPS)--> Front-end React
-    Front-end React --(REST/JSON)--> API Node.js / Express
-    API --> Service d'authentification
-    API --> PostgreSQL (base de donnees)
-    API --> Service de journalisation
-    API --(optionnel, hors MVP)--> Service de paiement en ligne
-
-Diagramme (syntaxe Mermaid, a coller dans un editeur compatible comme
-mermaid.live, Notion, GitHub ou un artefact Markdown) :
-
-    flowchart LR
-        U[Client] -->|HTTPS| FE[Front-end React]
-        FE -->|REST/JSON| API[API Node.js / Express]
-        API --> AUTH[Service d'authentification]
-        API --> DB[(PostgreSQL)]
-        API --> LOG[Service de journalisation]
-        API -.->|hors MVP| PAY[Service de paiement en ligne]
-        API --> MAIL[Service d'e-mail]
-
---------------------------------------------------------------------------------
-4.3 Flux de donnees
---------------------------------------------------------------------------------
-  1. L'utilisateur consulte le catalogue via l'application React.
-  2. Le front-end envoie une requete HTTPS a l'API REST.
-  3. Le middleware verifie le jeton JWT pour les actions necessitant une
-     authentification (panier, commandes, espace client).
-  4. Le controleur appelle le service metier approprie.
-  5. Le service metier verifie les regles de gestion (produit disponible,
-     delai de 48h) puis lit ou modifie les donnees PostgreSQL.
-  6. L'API retourne une reponse JSON.
-  7. Le front-end met a jour l'interface (catalogue, panier ou historique).
-
-Les communications entre le navigateur et le serveur utilisent HTTPS.
-Les echanges applicatifs utilisent JSON.
-
-
-================================================================================
-5. COMPOSANTS ET CLASSES BACK-END
-================================================================================
-
---------------------------------------------------------------------------------
-5.1 User
---------------------------------------------------------------------------------
-Responsabilite : representer un client ou un administrateur du systeme.
-
-Attributs :
-  - id: UUID
-  - firstName: string
-  - lastName: string
-  - email: string
-  - passwordHash: string
-  - role: UserRole (CLIENT | ADMIN)
-  - createdAt: Date
-  - updatedAt: Date
-
-Methodes :
-  - createUser()
-  - findByEmail(email)
-  - verifyPassword(password)
-  - generateToken()
-
---------------------------------------------------------------------------------
-5.2 Product
---------------------------------------------------------------------------------
-Responsabilite : representer un produit du catalogue de la boulangerie.
-
-Attributs :
-  - id: UUID
-  - name: string
-  - description: string | null
-  - price: number
-  - category: ProductCategory (VIENNOISERIE | PAIN | PATISSERIE |
-    VENTE_ADDITIONNELLE)
-  - available: boolean
-  - imageUrl: string | null
-  - createdAt: Date
-  - updatedAt: Date
-
-Methodes :
-  - findAll(filters)
-  - findById(id)
-  - findByCategory(category)
-
---------------------------------------------------------------------------------
-5.3 Cart (Panier)
---------------------------------------------------------------------------------
-Responsabilite : regrouper les lignes de commande en cours d'un
-utilisateur.
-
-Attributs :
-  - id: UUID
-  - userId: UUID
-  - createdAt: Date
-  - updatedAt: Date
-
-Methodes :
-  - findOrCreateForUser(userId)
-  - getItems(cartId)
-
---------------------------------------------------------------------------------
-5.4 OrderItem (Ligne de commande)
---------------------------------------------------------------------------------
-Responsabilite : representer une commande d'un produit passee par un
-utilisateur.
-
-Attributs :
-  - id: UUID
-  - cartId: UUID
-  - productId: UUID
-  - numberOfPeople: number
-  - pickupDate: Date
-  - pickupTime: string
-  - status: OrderStatus (PENDING | READY | COLLECTED | CANCELLED)
-  - createdAt: Date
-  - updatedAt: Date
-
-Methodes :
-  - create()
-  - findById()
-  - findByCartId()
-  - findByUserId()
-  - update()
-  - delete()
-
---------------------------------------------------------------------------------
-5.5 AuthController
---------------------------------------------------------------------------------
-Responsabilite : gerer l'inscription et la connexion.
-
-Methodes :
-  - register(req, res)
-  - login(req, res)
-  - logout(req, res)  [si une strategie de revocation est utilisee]
-
---------------------------------------------------------------------------------
-5.6 ProductController
---------------------------------------------------------------------------------
-Responsabilite : recevoir les requetes HTTP relatives au catalogue.
-
-Methodes :
-  - listProducts(req, res)
-  - getProduct(req, res)
-
---------------------------------------------------------------------------------
-5.7 OrderController
---------------------------------------------------------------------------------
-Responsabilite : recevoir les requetes HTTP relatives au panier et aux
-commandes.
-
-Methodes :
-  - getCart(req, res)
-  - createOrderItem(req, res)
-  - updateOrderItem(req, res)
-  - deleteOrderItem(req, res)
-  - listOrderHistory(req, res)
-
---------------------------------------------------------------------------------
-5.8 OrderService
---------------------------------------------------------------------------------
-Responsabilite : contenir les regles metier des commandes.
-
-Methodes :
-  - validateOrderInput(data)
-  - ensureProductAvailable(productId)
-  - ensure48hDelay(pickupDate, pickupTime)
-  - createOrderItem(userId, data)
-  - getUserCart(userId)
-  - updateOrderItem(userId, orderItemId, data)
-  - deleteOrderItem(userId, orderItemId)
-  - getOrderHistory(userId)
-
---------------------------------------------------------------------------------
-5.9 AuthMiddleware
---------------------------------------------------------------------------------
-Responsabilite : verifier le jeton JWT transmis dans la requete.
-
-Methode :
-  - authenticate(req, res, next)
-
---------------------------------------------------------------------------------
-5.10 Organisation du back-end
---------------------------------------------------------------------------------
-    src/
-    |-- controllers/
-    |   |-- auth.controller.ts
-    |   |-- product.controller.ts
-    |   `-- order.controller.ts
-    |-- services/
-    |   |-- auth.service.ts
-    |   |-- product.service.ts
-    |   `-- order.service.ts
-    |-- models/
-    |   |-- user.model.ts
-    |   |-- product.model.ts
-    |   |-- cart.model.ts
-    |   `-- orderItem.model.ts
-    |-- routes/
-    |   |-- auth.routes.ts
-    |   |-- product.routes.ts
-    |   `-- order.routes.ts
-    |-- middleware/
-    |   |-- auth.middleware.ts
-    |   `-- error.middleware.ts
-    |-- validators/
-    `-- app.ts
-
-Cette separation distingue les routes HTTP, les controleurs, la logique
-metier et l'acces aux donnees.
-
-
-================================================================================
-6. CONCEPTION DE LA BASE DE DONNEES
-================================================================================
-
---------------------------------------------------------------------------------
-6.1 Table "users"
---------------------------------------------------------------------------------
-  Colonne          Type              Contraintes
-  ---------------  ----------------  --------------------
-  id               UUID              Cle primaire
-  first_name       VARCHAR(100)      Obligatoire
-  last_name        VARCHAR(100)      Obligatoire
-  email            VARCHAR(255)      Obligatoire, unique
-  password_hash    TEXT              Obligatoire
-  role             VARCHAR(20)       Obligatoire, defaut 'CLIENT'
-  created_at       TIMESTAMP         Obligatoire
-  updated_at       TIMESTAMP         Obligatoire
-
---------------------------------------------------------------------------------
-6.2 Table "products"
---------------------------------------------------------------------------------
-  Colonne          Type              Contraintes
-  ---------------  ----------------  --------------------
-  id               UUID              Cle primaire
-  name             VARCHAR(150)      Obligatoire
-  description      TEXT              Facultatif
-  price            NUMERIC(6,2)      Obligatoire
-  category         VARCHAR(30)       Obligatoire
-  available        BOOLEAN           Obligatoire, defaut true
-  image_url        TEXT              Facultatif
-  created_at       TIMESTAMP         Obligatoire
-  updated_at       TIMESTAMP         Obligatoire
-
---------------------------------------------------------------------------------
-6.3 Table "carts"
---------------------------------------------------------------------------------
-  Colonne          Type              Contraintes
-  ---------------  ----------------  ---------------------------
-  id               UUID              Cle primaire
-  user_id          UUID              Cle etrangere vers users.id,
-                                     unique (un panier actif par
-                                     utilisateur)
-  created_at       TIMESTAMP         Obligatoire
-  updated_at       TIMESTAMP         Obligatoire
-
---------------------------------------------------------------------------------
-6.4 Table "order_items"
---------------------------------------------------------------------------------
-  Colonne           Type              Contraintes
-  ----------------  ----------------  -----------------------------
-  id                UUID              Cle primaire
-  cart_id           UUID              Cle etrangere vers carts.id
-  product_id        UUID              Cle etrangere vers products.id
-  number_of_people  INTEGER           Obligatoire, > 0
-  pickup_date       DATE              Obligatoire
-  pickup_time       TIME              Obligatoire
-  status            VARCHAR(20)       Obligatoire, defaut 'PENDING'
-  created_at        TIMESTAMP         Obligatoire
-  updated_at        TIMESTAMP         Obligatoire
-
---------------------------------------------------------------------------------
-6.5 Relations
---------------------------------------------------------------------------------
-Vue simplifiee :
-
-  USERS (1) ------- owns -------< (0..1) CARTS
-  CARTS (1) ------- contains ----< (0..N) ORDER_ITEMS
-  PRODUCTS (1) ---- referenced by < (0..N) ORDER_ITEMS
-
-Un utilisateur possede au plus un panier actif. Un panier contient zero,
-une ou plusieurs lignes de commande. Chaque ligne de commande fait
-reference a un seul produit du catalogue.
-
-Diagramme entite-relation (syntaxe Mermaid) :
-
-    erDiagram
-        USERS ||--o| CARTS : owns
-        CARTS ||--o{ ORDER_ITEMS : contains
-        PRODUCTS ||--o{ ORDER_ITEMS : referenced_by
-
-        USERS {
-            uuid id PK
-            varchar first_name
-            varchar last_name
-            varchar email UK
-            text password_hash
-            varchar role
-            timestamp created_at
-            timestamp updated_at
-        }
-
-        CARTS {
-            uuid id PK
-            uuid user_id FK
-            timestamp created_at
-            timestamp updated_at
-        }
-
-        PRODUCTS {
-            uuid id PK
-            varchar name
-            text description
-            numeric price
-            varchar category
-            boolean available
-            text image_url
-            timestamp created_at
-            timestamp updated_at
-        }
-
-        ORDER_ITEMS {
-            uuid id PK
-            uuid cart_id FK
-            uuid product_id FK
-            integer number_of_people
-            date pickup_date
-            time pickup_time
-            varchar status
-            timestamp created_at
-            timestamp updated_at
-        }
-
---------------------------------------------------------------------------------
-6.6 Valeurs autorisees
---------------------------------------------------------------------------------
-  role (users)      : CLIENT | ADMIN
-  category (products): VIENNOISERIE | PAIN | PATISSERIE |
-                        VENTE_ADDITIONNELLE
-  status (order_items): PENDING | READY | COLLECTED | CANCELLED
-
---------------------------------------------------------------------------------
-6.7 Regles d'integrite
---------------------------------------------------------------------------------
-  - L'e-mail d'un utilisateur doit etre unique.
-  - Une ligne de commande ne peut reference qu'un produit disponible
-    (available = true) au moment de la creation.
-  - La date/heure de retrait (pickup_date + pickup_time) doit etre au
-    moins 48h posterieure a la date de creation de la ligne de commande.
-  - Un utilisateur ne peut consulter ou modifier que son propre panier et
-    ses propres commandes.
-  - La suppression d'un utilisateur entraine la suppression de son
-    panier et de ses lignes de commande, selon la regle
-    ON DELETE CASCADE.
-  - Les champs category et status doivent appartenir aux valeurs
-    autorisees.
-
-
-================================================================================
-7. DIAGRAMMES DE SEQUENCE (description textuelle)
-================================================================================
-
---------------------------------------------------------------------------------
-7.1 Connexion d'un utilisateur
---------------------------------------------------------------------------------
-  1. Utilisateur   -> Front-end   : saisit e-mail et mot de passe
-  2. Front-end     -> API         : POST /api/auth/login
-  3. API           -> AuthService : verifier les identifiants
-  4. AuthService   -> PostgreSQL  : rechercher l'utilisateur par e-mail
-  5. PostgreSQL    -> AuthService : donnees utilisateur
-  6. AuthService   -> AuthService : comparer le mot de passe
-  7. AuthService   -> API         : generer un JWT
-  8. API           -> Front-end   : 200 + token
-  9. Front-end     -> Utilisateur : afficher l'espace client
-
-Diagramme (syntaxe Mermaid) :
-
-    sequenceDiagram
-        actor User as Utilisateur
-        participant FE as Front-end React
-        participant API as API Express
-        participant Auth as AuthService
-        participant DB as PostgreSQL
-
-        User->>FE: Saisit e-mail et mot de passe
-        FE->>API: POST /api/auth/login
-        API->>Auth: Verifier les identifiants
-        Auth->>DB: Rechercher l'utilisateur par e-mail
-        DB-->>Auth: Donnees utilisateur
-        Auth->>Auth: Comparer le mot de passe
-        Auth-->>API: Generer un JWT
-        API-->>FE: 200 + token
-        FE-->>User: Afficher l'espace client
-
---------------------------------------------------------------------------------
-7.2 Consultation du catalogue
---------------------------------------------------------------------------------
-  1. Utilisateur   -> Front-end        : ouvre la page catalogue
-  2. Front-end     -> API              : GET /api/products?category=...
-  3. API           -> ProductService   : findByCategory(category)
-  4. ProductService-> PostgreSQL       : SELECT products WHERE
-                                         category = ... AND available =
-                                         true
-  5. PostgreSQL    -> ProductService   : liste des produits
-  6. ProductService-> API              : produits filtres
-  7. API           -> Front-end        : 200 + JSON
-  8. Front-end     -> Utilisateur      : afficher les produits par onglet
-
-Diagramme (syntaxe Mermaid) :
-
-    sequenceDiagram
-        actor User as Utilisateur
-        participant FE as Front-end React
-        participant API as API Express
-        participant Service as ProductService
-        participant DB as PostgreSQL
-
-        User->>FE: Ouvre la page catalogue / choisit un onglet
-        FE->>API: GET /api/products?category=...
-        API->>Service: findByCategory(category)
-        Service->>DB: SELECT products WHERE category = ... AND available = true
-        DB-->>Service: Liste des produits
-        Service-->>API: Produits filtres
-        API-->>FE: 200 + JSON
-        FE-->>User: Afficher les produits de la categorie
-
---------------------------------------------------------------------------------
-7.3 Creation d'une commande (ajout au panier)
---------------------------------------------------------------------------------
-  1. Utilisateur   -> Front-end     : remplit le formulaire de commande
-                                       (produit, nb personnes, date, heure)
-  2. Front-end     -> API           : POST /api/orders avec JSON et JWT
-  3. API           -> AuthMiddleware: verifier le JWT
-  4. AuthMiddleware-> API           : userId authentifie
-  5. API           -> OrderService  : valider le produit et le delai de
-                                       48h
-  6. OrderService  -> PostgreSQL    : verifier la disponibilite du
-                                       produit
-  7. OrderService  -> PostgreSQL    : creer ou recuperer le panier de
-                                       l'utilisateur
-  8. OrderService  -> PostgreSQL    : INSERT INTO order_items
-  9. PostgreSQL    -> OrderService  : ligne de commande creee
- 10. OrderService  -> API           : objet commande
- 11. API           -> Front-end     : 201 + JSON
- 12. Front-end     -> Utilisateur   : afficher un message de succes et
-                                       mettre a jour le panier
-
-Si le delai de 48h n'est pas respecte ou si le produit n'est pas
-disponible, l'API retourne une erreur 400 et aucune ecriture n'est
-effectuee.
-
-Diagramme (syntaxe Mermaid) :
-
-    sequenceDiagram
-        actor User as Utilisateur
-        participant FE as Front-end React
-        participant API as API Express
-        participant MW as AuthMiddleware
-        participant Service as OrderService
-        participant DB as PostgreSQL
-
-        User->>FE: Remplit le formulaire (produit, nb personnes, date, heure)
-        FE->>API: POST /api/orders avec JSON et JWT
-        API->>MW: Verifier le JWT
-        MW-->>API: userId authentifie
-        API->>Service: Valider produit disponible et delai de 48h
-        Service->>DB: Verifier la disponibilite du produit
-        Service->>DB: Creer ou recuperer le panier de l'utilisateur
-        Service->>DB: INSERT INTO order_items
-        DB-->>Service: Ligne de commande creee
-        Service-->>API: Objet commande
-        API-->>FE: 201 + JSON
-        FE-->>User: Afficher un message de succes
-
-
-================================================================================
-8. APIs EXTERNES ET INTERNES
-================================================================================
-
---------------------------------------------------------------------------------
-8.1 APIs externes
---------------------------------------------------------------------------------
-  API                                Utilisation                Justification
-  ---------------------------------  -------------------------  --------------------------------
-  Service d'e-mail (ex. SendGrid)    Confirmation de commande,   Evite de maintenir un serveur
-                                     reinitialisation du mot     SMTP interne
-                                     de passe
-  Service de journalisation          Suivi des erreurs en        Facilite le diagnostic des
-  (ex. Sentry)                       production                  incidents
-  Service d'hebergement              Hebergement de l'API et     Permet un deploiement evolutif
-  (ex. Render, AWS)                  de la base de donnees
-  Service de paiement                Paiement en ligne           Hors perimetre du MVP (US-10),
-  (ex. Stripe) - hors MVP            (extension future)          a integrer lors d'une version
-                                                                  ulterieure
-
---------------------------------------------------------------------------------
-8.2 Format general des reponses
---------------------------------------------------------------------------------
-  Reponse reussie :
-    {
-      "data": {},
-      "message": "Operation completed successfully"
-    }
-
-  Reponse d'erreur :
-    {
-      "error": {
-        "code": "VALIDATION_ERROR",
-        "message": "La commande doit etre passee au moins 48h avant le
-        retrait",
-        "details": []
-      }
-    }
-
---------------------------------------------------------------------------------
-8.3 Endpoints d'authentification
---------------------------------------------------------------------------------
-  Methode  URL                    Entree                                Sortie
-  -------  ---------------------  ------------------------------------  ------------------------
-  POST     /api/auth/register     JSON: firstName, lastName, email,     Utilisateur cree + token
-                                  password
-  POST     /api/auth/login        JSON: email, password                 Token JWT + utilisateur
-  GET      /api/auth/me           Header Authorization: Bearer          Utilisateur connecte
-
-  Exemple - inscription :
-
-    POST /api/auth/register
-    Content-Type: application/json
-
-    {
-      "firstName": "Alice",
-      "lastName": "Martin",
-      "email": "alice@example.com",
-      "password": "MotDePasseSecurise123!"
-    }
-
-  Reponse :
-
-    {
-      "data": {
-        "user": {
-          "id": "8f7c0e1e-1b8d-4bd1-8f82-123456789abc",
-          "firstName": "Alice",
-          "lastName": "Martin",
-          "email": "alice@example.com"
-        },
-        "token": "jwt-token"
-      },
-      "message": "User registered successfully"
-    }
-
---------------------------------------------------------------------------------
-8.4 Endpoints du catalogue de produits
---------------------------------------------------------------------------------
-  Methode  URL                  Entree                              Sortie
-  -------  -------------------  ----------------------------------  ---------------------
-  GET      /api/products        Query params facultatifs: category  Liste des produits
-  GET      /api/products/:id    Identifiant dans l'URL               Produit detaille
-
---------------------------------------------------------------------------------
-8.5 Endpoints du panier et des commandes
---------------------------------------------------------------------------------
-  Methode  URL                    Entree                                 Sortie
-  -------  ---------------------  -------------------------------------  ---------------------
-  GET      /api/cart              Header Authorization: Bearer            Panier de l'utilisateur
-  POST     /api/orders            JSON: productId, numberOfPeople,        Ligne de commande creee
-                                  pickupDate, pickupTime
-  PATCH    /api/orders/:id        JSON avec les champs a modifier         Ligne de commande modifiee
-  DELETE   /api/orders/:id        Identifiant dans l'URL                  Confirmation de suppression
-  GET      /api/orders/history    Query params facultatifs: search        Historique des commandes
-
-  Exemple - creation d'une commande :
-
-    POST /api/orders
-    Authorization: Bearer jwt-token
-    Content-Type: application/json
-
-    {
-      "productId": "c1a2b3c4-1111-4c75-8e2e-123456789abc",
-      "numberOfPeople": 4,
-      "pickupDate": "2026-09-15",
-      "pickupTime": "08:00"
-    }
-
-  Reponse :
-
-    {
-      "data": {
-        "id": "a3c5f5a3-0a19-4c75-8e2e-123456789abc",
-        "productId": "c1a2b3c4-1111-4c75-8e2e-123456789abc",
-        "numberOfPeople": 4,
-        "pickupDate": "2026-09-15",
-        "pickupTime": "08:00",
-        "status": "PENDING"
-      },
-      "message": "Order created successfully"
-    }
-
---------------------------------------------------------------------------------
-8.6 Codes HTTP
---------------------------------------------------------------------------------
-  200  Requete reussie
-  201  Ressource creee
-  400  Donnees invalides ou delai de 48h non respecte
-  401  Authentification necessaire ou invalide
-  403  Acces interdit
-  404  Ressource inexistante
-  409  Conflit, par exemple e-mail deja utilise
-  500  Erreur interne du serveur
-
-
-================================================================================
-9. STRATEGIE SCM (GESTION DE VERSION)
-================================================================================
-
---------------------------------------------------------------------------------
-9.1 Outil
---------------------------------------------------------------------------------
-Le projet utilise Git pour le controle de version et GitHub pour
-l'hebergement du code, les Pull Requests et les pipelines CI/CD.
-
---------------------------------------------------------------------------------
-9.2 Strategie de branches
---------------------------------------------------------------------------------
-    main
-    `-- development
-        |-- feature/authentication
-        |-- feature/catalog
-        |-- feature/cart-and-orders
-        `-- fix/validation-error
-
-  Branche       Utilisation
-  ------------  -------------------------------------------------
-  main          Version stable et deployee en production
-  development   Branche d'integration des fonctionnalites validees
-  feature/*     Developpement d'une fonctionnalite isolee
-  fix/*         Correction d'un defaut identifie
-  release/*     Preparation d'une version, si necessaire
-
---------------------------------------------------------------------------------
-9.3 Regles de contribution
---------------------------------------------------------------------------------
-  - Un commit doit representer une modification coherente.
-  - Les messages de commit suivent une convention (ex: "feat: add order
-    creation").
-  - Aucun developpement direct n'est effectue sur main.
-  - Toute modification passe par une Pull Request.
-  - Une Pull Request doit contenir une description et les tests associes.
-  - Au moins une revue de code est requise avant fusion.
-  - Le pipeline CI doit etre entierement valide.
-  - Les secrets ne doivent jamais etre stockes dans Git.
-
---------------------------------------------------------------------------------
-9.4 Cycle de developpement type
---------------------------------------------------------------------------------
-   1. Creer une branche a partir de development.
-   2. Implementer la fonctionnalite.
-   3. Ajouter ou modifier les tests.
-   4. Pousser la branche sur GitHub.
-   5. Ouvrir une Pull Request.
-   6. Effectuer la revue de code.
-   7. Corriger les remarques eventuelles.
-   8. Fusionner dans development.
-   9. Deployer automatiquement en staging.
-  10. Fusionner dans main apres validation.
-
-
-================================================================================
-10. STRATEGIE QA
-================================================================================
-
---------------------------------------------------------------------------------
-10.1 Niveaux de test
---------------------------------------------------------------------------------
-  Type de test         Objectif                                    Outil
-  --------------------  ------------------------------------------  --------------------------
-  Tests unitaires       Verifier une fonction ou classe isolee      Jest
-  Tests de composants   Verifier le comportement des composants     React Testing Library
-                        React
-  Tests d'integration   Verifier l'interaction API-base de donnees  Jest, Supertest
-  Tests API             Verifier les endpoints et reponses HTTP     Postman ou Newman
-  Tests end-to-end      Verifier les parcours utilisateurs complets Playwright
-  Tests manuels         Valider l'ergonomie et les cas critiques    Environnement staging
-  Analyse statique      Detecter les erreurs de style et de typage  ESLint, TypeScript
-
---------------------------------------------------------------------------------
-10.2 Tests prioritaires
---------------------------------------------------------------------------------
-Le MVP doit au minimum tester :
-  - L'inscription avec des donnees valides.
-  - Le rejet d'une adresse e-mail deja utilisee.
-  - La connexion avec un mot de passe incorrect.
-  - L'acces interdit a une route sans JWT.
-  - L'affichage du catalogue filtre par categorie.
-  - La creation d'une commande avec un delai de 48h respecte.
-  - Le rejet d'une commande avec un delai inferieur a 48h.
-  - Le rejet d'une commande sur un produit indisponible.
-  - La modification et la suppression d'une commande dans le delai
-    autorise.
-  - L'impossibilite de consulter le panier d'un autre utilisateur.
-
---------------------------------------------------------------------------------
-10.3 Pipeline QA et deploiement
---------------------------------------------------------------------------------
-  Push / Pull Request
-        v
-  Installation des dependances
-        v
-  Lint et verification TypeScript
-        v
-  Tests unitaires
-        v
-  Tests d'integration
-        v
-  Build
-        v
-  Deploiement staging
-        v
-  Tests end-to-end
-        v
-  Validation metier
-        v
-  Deploiement production
-
---------------------------------------------------------------------------------
-10.4 Environnements
---------------------------------------------------------------------------------
-  Developpement :
-    - Utilise par les developpeurs.
-    - Base de donnees locale ou de test.
-    - Catalogue de produits fictif.
-
-  Staging :
-    - Version proche de la production.
-    - Tests d'integration et end-to-end.
-    - Validation par les responsables de la boulangerie.
-
-  Production :
-    - Accessible aux clients de la boulangerie.
-    - Sauvegardes activees.
-    - Journalisation et surveillance des erreurs.
-
-
-================================================================================
-11. JUSTIFICATIONS TECHNIQUES
-================================================================================
-
-  React et TypeScript
-    React convient a une interface composee de plusieurs ecrans
-    (catalogue par onglets, panier, espace client) et de composants
-    reutilisables (fiche produit, ligne de commande). TypeScript permet
-    de detecter certaines erreurs avant l'execution.
-
-  Node.js et Express
-    Node.js permet d'utiliser JavaScript ou TypeScript cote serveur et
-    cote client. Express fournit une structure simple pour creer une API
-    REST, gerer les routes et centraliser la regle metier des 48h dans
-    un middleware ou un service dedie.
-
-  PostgreSQL
-    PostgreSQL est adapte aux donnees structurees du projet. Les
-    relations entre utilisateurs, panier, commandes et produits sont
-    clairement modelisees par des cles etrangeres et des contraintes
-    d'integrite.
-
-  JWT
-    JWT permet a l'API d'identifier un client lors de requetes
-    successives sans conserver necessairement une session serveur
-    classique. Les mots de passe doivent etre haches et ne doivent
-    jamais etre stockes en clair.
-
-  Docker
-    Docker garantit que l'application s'execute dans des environnements
-    coherents entre les postes de developpement, la staging et la
-    production.
-
-  Tests automatises
-    Les tests unitaires et d'integration detectent rapidement les
-    regressions, en particulier sur la regle critique du delai de 48h.
-    Les tests end-to-end verifient que les principaux parcours (creation
-    de compte, consultation du catalogue, commande) fonctionnent comme
-    prevu.
-
-  Architecture en couches
-    La separation entre controleurs, services, modeles et middleware
-    facilite la maintenance, les tests et l'evolution future du systeme,
-    notamment l'ajout futur du paiement en ligne (US-10).
-
-
-================================================================================
-12. SECURITE ET EVOLUTIVITE
-================================================================================
-
---------------------------------------------------------------------------------
-12.1 Mesures de securite
---------------------------------------------------------------------------------
-  - Utilisation obligatoire de HTTPS.
-  - Hachage des mots de passe avec un algorithme adapte.
-  - Validation des donnees entrantes, notamment la coherence des
-    dates/heures de retrait.
-  - Protection des routes privees (panier, commandes, espace client) par
-    JWT.
-  - Verification de la propriete du panier et des commandes.
-  - Limitation du nombre de requetes sur les endpoints sensibles.
-  - Stockage des secrets dans des variables d'environnement.
-  - Protection contre les injections SQL grace aux requetes parametrees.
-  - Journalisation des erreurs sans exposer d'informations sensibles.
-
---------------------------------------------------------------------------------
-12.2 Evolutions possibles
---------------------------------------------------------------------------------
-  - Integration d'un moyen de paiement en ligne (US-10).
-  - Ajout d'une application mobile (US-11).
-  - Ajout de notifications en temps reel sur l'etat des commandes
-    (US-12).
-  - Pagination et recherche avancee dans le catalogue.
-  - Index sur user_id, category et pickup_date.
-  - Gestion des stocks et de la disponibilite en temps reel des produits.
-  - Interface d'administration pour la gestion du catalogue et des
-    commandes.
-
-
-================================================================================
-13. CONCLUSION DU LIVRABLE
-================================================================================
-
-Cette documentation presente une conception technique complete pour le
-MVP du site web "O2 Passions". Elle comprend les User Stories priorisees,
-les maquettes principales (catalogue, panier, espace client),
-l'architecture, les composants logiciels, le schema de base de donnees,
-les diagrammes de sequence, les specifications API ainsi que les
-strategies SCM et QA.
-
-Les elements a valider ou adapter avec la boulangerie sont notamment
-l'organisation exacte du catalogue par categories, la gestion des
-horaires de retrait, le choix final des technologies et le calendrier
-d'integration du paiement en ligne (US-10).
-
-================================================================================
-                                FIN DU DOCUMENT
-================================================================================
+# Documentation technique — Site web O2Passions (boulangerie-pâtisserie)
+
+**Projet :** O2Passions — Site web d'une boulangerie-pâtisserie permettant de présenter les produits, informer sur les horaires et la localisation, et passer des commandes en ligne (retrait en boutique ou livraison locale).
+
+**Objectif du MVP :** Offrir une vitrine numérique claire et permettre la prise de commande simple, tout en restant facile à maintenir et à faire évoluer.
+
+## Sommaire
+
+1. [Présentation du projet](#1-présentation-du-projet)
+2. [User Stories et priorisation](#2-user-stories-et-priorisation)
+3. [Maquettes des écrans principaux](#3-maquettes-des-écrans-principaux)
+4. [Architecture du système](#4-architecture-du-système)
+5. [Composants, classes et conception de la base de données](#5-composants-classes-et-conception-de-la-base-de-données)
+6. [Conception de la base de données](#6-conception-de-la-base-de-données)
+7. [Diagrammes de séquence](#7-diagrammes-de-séquence)
+8. [APIs externes et spécifications des APIs internes](#8-apis-externes-et-spécifications-des-apis-internes)
+9. [Stratégie SCM et QA](#9-stratégie-scm-et-qa)
+10. [Justifications techniques](#10-justifications-techniques)
+11. [Sécurité et évolutions futures](#11-sécurité-et-évolutions-futures)
+
+---
+
+## 1. Présentation du projet
+
+### 1.1 Contexte
+
+O2Passions est une boulangerie-pâtisserie qui souhaite :
+
+- Présenter ses produits (pains, viennoiseries, pâtisseries, traiteur, etc.).
+- Informer sur les horaires, l'adresse et les coordonnées.
+- Permettre aux clients de commander en ligne pour :
+  - Retrait en boutique.
+  - Livraison locale (périmètre limité).
+
+Le site doit être :
+
+- Responsive (mobile, tablette, desktop).
+- Simple à utiliser pour les clients.
+- Facile à administrer pour l'équipe (mise à jour des produits, gestion des commandes).
+
+### 1.2 Types d'utilisateurs
+
+| Type d'utilisateur | Description |
+|---|---|
+| Visiteur | Consulte le site, les produits, les horaires et la localisation. |
+| Client connecté | Crée un compte, passe et suit ses commandes, gère son profil. |
+| Administrateur / Gérant | Gère le catalogue produits, les commandes, les horaires et le contenu du site. |
+
+### 1.3 Périmètre du MVP
+
+**Inclus :**
+
+- Vitrine des produits par catégories.
+- Pages d'information (À propos, Horaires & Localisation, Contact).
+- Compte client (création, connexion, profil).
+- Panier et commande en ligne.
+- Paiement en ligne (carte bancaire).
+- Back-office pour gérer produits et commandes.
+- Tests automatisés et déploiement continu.
+
+**Hors périmètre (pour une version ultérieure) :**
+
+- Programme de fidélité avancé.
+- Abonnements récurrents.
+- Application mobile native.
+- Chat en direct avec le personnel.
+- Multi-boutiques.
+
+---
+
+## 2. User Stories et priorisation
+
+Les User Stories sont rédigées selon le format : *« En tant que [type d'utilisateur], je veux [action], afin de [objectif]. »*
+
+### 2.1 Must Have — Indispensable
+
+**US-01 — Consulter la vitrine et les produits**
+
+> En tant que visiteur, je veux consulter la liste des produits par catégorie, afin de découvrir l'offre de la boulangerie.
+
+Critères d'acceptation :
+- Les produits sont organisés par catégories (pains, viennoiseries, pâtisseries, etc.).
+- Chaque produit affiche : nom, description courte, prix, image, disponibilité.
+- La page est lisible sur mobile et desktop.
+
+**US-02 — Voir les horaires et la localisation**
+
+> En tant que visiteur, je veux voir les horaires d'ouverture et l'adresse de la boutique, afin de savoir quand et où me rendre.
+
+Critères d'acceptation :
+- Une page dédiée affiche les horaires par jour.
+- L'adresse, le numéro de téléphone et un lien vers la carte (Google Maps) sont visibles.
+- Les horaires peuvent être mis à jour par l'administrateur.
+
+**US-03 — Créer un compte client**
+
+> En tant que visiteur, je veux créer un compte client, afin de pouvoir commander en ligne et suivre mes commandes.
+
+Critères d'acceptation :
+- Formulaire d'inscription : nom, prénom, e-mail, mot de passe, téléphone (optionnel).
+- Validation de l'e-mail (format et unicité).
+- Mot de passe conforme aux règles de sécurité.
+- Confirmation par e-mail (optionnelle dans le MVP, mais prévue).
+
+**US-04 — Se connecter / se déconnecter**
+
+> En tant que client, je veux me connecter et me déconnecter, afin d'accéder à mon espace personnel et à mes commandes.
+
+Critères d'acceptation :
+- Connexion par e-mail et mot de passe.
+- Gestion de session sécurisée (JWT ou session serveur).
+- Redirection vers le tableau de bord après connexion.
+- Déconnexion claire et fonctionnelle.
+
+**US-05 — Ajouter des produits au panier**
+
+> En tant que client connecté ou non (selon choix), je veux ajouter des produits au panier, afin de préparer ma commande.
+
+Critères d'acceptation :
+- Sélection de la quantité par produit.
+- Affichage du panier avec récapitulatif (produits, quantités, prix total).
+- Possibilité de modifier ou supprimer un article du panier.
+- Le panier est conservé entre les pages (session ou compte).
+
+**US-06 — Passer une commande**
+
+> En tant que client connecté, je veux passer une commande en ligne, afin de réserver mes produits pour retrait ou livraison.
+
+Critères d'acceptation :
+- Choix du mode de réception : retrait en boutique ou livraison.
+- Sélection de la date et de l'horaire de retrait/livraison (plages définies).
+- Saisie ou confirmation de l'adresse de livraison si applicable.
+- Récapitulatif de la commande avant paiement.
+- Paiement sécurisé par carte bancaire.
+- Génération d'un numéro de commande et envoi d'un e-mail de confirmation.
+
+**US-07 — Suivre ses commandes**
+
+> En tant que client connecté, je veux consulter l'historique et le statut de mes commandes, afin de savoir où en est ma commande.
+
+Critères d'acceptation :
+- Liste des commandes passées par le client.
+- Détail de chaque commande : produits, total, mode de réception, date, statut.
+- Statuts possibles : en préparation, prête, en livraison, terminée, annulée.
+
+**US-08 — Gérer le catalogue produits (back-office)**
+
+> En tant qu'administrateur, je veux ajouter, modifier et désactiver des produits, afin de maintenir le catalogue à jour.
+
+Critères d'acceptation :
+- Création d'un produit : nom, description, prix, catégorie, image, disponibilité.
+- Modification des informations d'un produit.
+- Activation/désactivation d'un produit (sans suppression).
+- Gestion des catégories.
+
+**US-09 — Gérer les commandes (back-office)**
+
+> En tant qu'administrateur, je veux consulter et mettre à jour le statut des commandes, afin de gérer la production et la livraison.
+
+Critères d'acceptation :
+- Liste des commandes avec filtres (statut, date, mode de réception).
+- Détail d'une commande.
+- Changement de statut (ex. « en préparation » → « prête »).
+- Possibilité d'annuler une commande avec motif.
+
+### 2.2 Should Have — Important
+
+**US-10 — Code promotionnel**
+> En tant que client, je veux saisir un code promotionnel lors de la commande, afin de bénéficier d'une réduction.
+
+**US-11 — Favoris / produits préférés**
+> En tant que client, je veux marquer des produits comme favoris, afin de les retrouver facilement.
+
+**US-12 — Avis et notes sur les produits**
+> En tant que client, je veux laisser un avis et une note sur un produit après achat, afin de partager mon expérience.
+
+### 2.3 Could Have — Souhaitable
+
+**US-13 — Pré-commande pour événements**
+> En tant que client, je veux commander un gâteau personnalisé pour un événement, afin de préciser mes besoins (texte, décor, etc.).
+
+**US-14 — Newsletter**
+> En tant que visiteur, je veux m'inscrire à la newsletter, afin de recevoir les actualités et promotions.
+
+### 2.4 Won't Have — Hors périmètre du MVP
+
+**US-15 — Programme de fidélité complet**
+> En tant que client, je veux cumuler des points et les convertir en avantages, afin de bénéficier d'un programme de fidélité.
+
+Cette fonctionnalité est reportée à une version ultérieure.
+
+---
+
+## 3. Maquettes des écrans principaux
+
+Le MVP inclut une interface client (site public) et une interface administrateur (back-office).
+
+### 3.1 Page d'accueil (client)
+
+```text
++----------------------------------------------------------+
+| O2Passions                         [Panier] [Compte]      |
++----------------------------------------------------------+
+| [Bannière : image de vitrine / spécialités]              |
++----------------------------------------------------------+
+| Nos catégories                                           |
+| [Pains] [Viennoiseries] [Pâtisseries] [Traiteur] [...]   |
++----------------------------------------------------------+
+| Produits phares                                          |
+| [Carte produit 1] [Carte produit 2] [Carte produit 3]    |
++----------------------------------------------------------+
+| Horaires & Localisation                                  |
+| Ouvert du mardi au dimanche, 7h-19h                       |
+| 12 rue du Four, 75000 Ville                               |
+| [Voir sur la carte]                                       |
++----------------------------------------------------------+
+| À propos                                                 |
+| Court texte sur l'histoire et les valeurs.                |
++----------------------------------------------------------+
+| Footer : liens légaux, CGV, contact, réseaux sociaux      |
++----------------------------------------------------------+
+```
+
+### 3.2 Page catégorie / liste des produits
+
+```text
++----------------------------------------------------------+
+| O2Passions                         [Panier] [Compte]      |
++----------------------------------------------------------+
+| Pains                                                     |
++----------------------------------------------------------+
+| Filtres : [Tous] [Sans gluten] [Au levain] [...]          |
++----------------------------------------------------------+
+| [Produit] [Produit] [Produit] [Produit]                   |
+| - Image                                                   |
+| - Nom                                                      |
+| - Prix                                                     |
+| - Bouton "Ajouter au panier"                               |
++----------------------------------------------------------+
+```
+
+### 3.3 Détail d'un produit
+
+```text
++----------------------------------------------------------+
+| O2Passions                         [Panier] [Compte]      |
++----------------------------------------------------------+
+| [Image grande]                                            |
+|                                                            |
+| Nom du produit                                             |
+| Description complète                                       |
+| Prix : 3,50 EUR                                             |
+|                                                            |
+| Quantité : [ - ] [ 1 ] [ + ]                                |
+| [ Ajouter au panier ]                                       |
+|                                                            |
+| Autres produits de la catégorie                             |
++----------------------------------------------------------+
+```
+
+### 3.4 Panier
+
+```text
++----------------------------------------------------------+
+| Mon panier                                                |
++----------------------------------------------------------+
+| Produit            | Qté | Prix unit. | Total | Suppr.    |
+| Baguette tradition |  2  |   1,20 EUR |2,40 EUR|   [X]    |
+| Éclair chocolat    |  1  |   3,50 EUR |3,50 EUR|   [X]    |
++----------------------------------------------------------+
+| Total : 5,90 EUR                                            |
+| [ Continuer mes achats ]   [ Commander ]                    |
++----------------------------------------------------------+
+```
+
+### 3.5 Checkout (récapitulatif et paiement)
+
+```text
++----------------------------------------------------------+
+| Commander                                                 |
++----------------------------------------------------------+
+| Récapitulatif de la commande                               |
+| - Liste des produits                                       |
+| - Total                                                     |
++----------------------------------------------------------+
+| Mode de réception                                          |
+| [ Retrait en boutique ]  [ Livraison ]                      |
++----------------------------------------------------------+
+| Date et heure                                              |
+| [Sélecteur de date] [Sélecteur d'horaire]                    |
++----------------------------------------------------------+
+| Adresse (si livraison)                                      |
+| [Formulaire d'adresse]                                       |
++----------------------------------------------------------+
+| Paiement                                                    |
+| [Payer par carte]                                            |
++----------------------------------------------------------+
+| [ Confirmer la commande ]                                    |
++----------------------------------------------------------+
+```
+
+### 3.6 Espace client (mes commandes)
+
+```text
++----------------------------------------------------------+
+| Mon espace                                                |
++----------------------------------------------------------+
+| Mes informations                                           |
+| Nom, prénom, e-mail, téléphone                               |
+| [Modifier]                                                   |
++----------------------------------------------------------+
+| Mes commandes                                               |
+| Date | N° commande | Total | Statut | [Voir détail]          |
++----------------------------------------------------------+
+```
+
+### 3.7 Back-office — Liste des produits
+
+```text
++----------------------------------------------------------+
+| Administration O2Passions                                  |
++----------------------------------------------------------+
+| Produits                                                    |
++----------------------------------------------------------+
+| [Ajouter un produit]                                         |
++----------------------------------------------------------+
+| Nom | Catégorie | Prix | Statut | Actions                     |
+| Baguette | Pains | 1,20 EUR | Actif | [Éditer] [Désactiver]   |
++----------------------------------------------------------+
+```
+
+### 3.8 Back-office — Détail d'une commande
+
+```text
++----------------------------------------------------------+
+| Commande #1234                                             |
++----------------------------------------------------------+
+| Client : Alice Martin                                        |
+| Date : 07/09/2026 10:30                                       |
+| Mode : Livraison                                              |
+| Statut : [En préparation v]                                    |
++----------------------------------------------------------+
+| Produits                                                     |
+| - 2 x Baguette tradition                                      |
+| - 1 x Éclair chocolat                                          |
++----------------------------------------------------------+
+| Adresse de livraison                                          |
+| 10 avenue des Champs, 75000 Ville                               |
++----------------------------------------------------------+
+| [Enregistrer le statut]  [Annuler la commande]                  |
++----------------------------------------------------------+
+```
+
+---
+
+## 4. Architecture du système
+
+### 4.1 Technologies retenues
+
+| Couche | Technologie | Rôle |
+|---|---|---|
+| Front-end client | Next.js (React) + TypeScript | Site public, SEO, rendu serveur. |
+| Front-end admin | Next.js ou React + TypeScript | Back-office pour gérants. |
+| Back-end API | Node.js avec NestJS ou Express + TypeScript | API REST, logique métier. |
+| Base de données | PostgreSQL | Stockage des produits, commandes, utilisateurs. |
+| Authentification | JWT (ou sessions serveur) | Gestion des connexions clients et admin. |
+| Paiement | Stripe (ou équivalent) | Paiement par carte bancaire. |
+| Hébergement | Vercel / Netlify (front) + Render / AWS / Railway (API & DB) | Déploiement et scalabilité. |
+| Tests | Jest, React Testing Library, Supertest, Playwright | Tests unitaires, intégration, end-to-end. |
+| CI/CD | GitHub Actions | Build, tests, déploiement automatique. |
+
+### 4.2 Diagramme d'architecture de haut niveau
+
+<img src="diagrams/architecture.png" alt="Architecture de haut niveau O2Passions" width="850"/>
+
+### 4.3 Flux de données principaux
+
+1. Le client navigue sur le site Next.js.
+2. Le front-end appelle l'API pour :
+   - Récupérer les produits et catégories.
+   - Créer / mettre à jour le panier.
+   - Passer une commande.
+3. L'API vérifie l'authentification (JWT).
+4. L'API interagit avec PostgreSQL pour lire/écrire les données.
+5. Pour le paiement, l'API communique avec Stripe.
+6. Le back-office appelle les mêmes endpoints API avec des droits admin.
+
+---
+
+## 5. Composants, classes et conception de la base de données
+
+### 5.1 Principaux composants front-end (client)
+
+- `Layout` : structure commune (header, footer).
+- `Navbar` : navigation, liens, icônes panier/compte.
+- `HomePage` : page d'accueil avec sections.
+- `CategoryPage` : liste des produits d'une catégorie.
+- `ProductCard` : carte produit (image, nom, prix, bouton).
+- `ProductDetailPage` : détail d'un produit.
+- `CartPage` : affichage et gestion du panier.
+- `CheckoutPage` : formulaire de commande et paiement.
+- `AccountPage` : profil et historique des commandes.
+- `LoginForm` / `RegisterForm` : authentification.
+- `OrderList` / `OrderDetail` : historique et détail des commandes.
+
+### 5.2 Principaux composants back-office
+
+- `AdminLayout` : structure admin (menu latéral, header).
+- `ProductList` / `ProductForm` : gestion des produits.
+- `OrderList` / `OrderDetail` : gestion des commandes.
+- `SettingsPage` : horaires, infos boutique, etc.
+
+### 5.3 Classes / services back-end
+
+**User**
+- Attributs : `id`, `email`, `passwordHash`, `firstName`, `lastName`, `phone`, `role`, `createdAt`, `updatedAt`.
+- Méthodes : `createUser()`, `findByEmail()`, `verifyPassword()`, `generateToken()`.
+
+**Product**
+- Attributs : `id`, `name`, `slug`, `description`, `price`, `categoryId`, `imageUrl`, `isAvailable`, `createdAt`, `updatedAt`.
+- Méthodes : `create()`, `findAll()`, `findById()`, `update()`, `delete()`, `findByCategory()`.
+
+**Category**
+- Attributs : `id`, `name`, `slug`, `order`.
+- Méthodes : `create()`, `findAll()`, `findById()`.
+
+**Order**
+- Attributs : `id`, `userId`, `status`, `receptionMode`, `scheduledDate`, `scheduledTimeSlot`, `deliveryAddress`, `totalAmount`, `paymentStatus`, `createdAt`, `updatedAt`.
+- Méthodes : `create()`, `findById()`, `findByUserId()`, `findAllForAdmin()`, `updateStatus()`, `cancel()`.
+
+**OrderItem**
+- Attributs : `id`, `orderId`, `productId`, `quantity`, `unitPrice`, `totalPrice`.
+- Méthodes : `create()`, `findByOrderId()`.
+
+**AuthService**
+- Méthodes : `register()`, `login()`, `validateToken()`, `refreshToken()` (optionnel).
+
+**ProductService**
+- Méthodes : `listProducts(filters)`, `getProduct(id)`, `createProduct(data)`, `updateProduct(id, data)`, `toggleAvailability(id)`.
+
+**OrderService**
+- Méthodes : `createOrder(userId, data)`, `getOrder(id)`, `getUserOrders(userId)`, `updateOrderStatus(orderId, status)`, `cancelOrder(orderId, reason)`.
+
+**PaymentService**
+- Méthodes : `createPaymentIntent(amount, currency)`, `confirmPayment(paymentIntentId)`, `handleWebhook(event)`.
+
+---
+
+## 6. Conception de la base de données
+
+### 6.1 Schéma relationnel (ER)
+
+**Table `users`**
+
+| Colonne | Type | Contraintes |
+|---|---|---|
+| id | UUID | PK |
+| email | VARCHAR(255) | Unique, obligatoire |
+| password_hash | TEXT | Obligatoire |
+| first_name | VARCHAR(100) | Obligatoire |
+| last_name | VARCHAR(100) | Obligatoire |
+| phone | VARCHAR(20) | Facultatif |
+| role | VARCHAR(20) | CUSTOMER, ADMIN |
+| created_at | TIMESTAMP | Obligatoire |
+| updated_at | TIMESTAMP | Obligatoire |
+
+**Table `categories`**
+
+| Colonne | Type | Contraintes |
+|---|---|---|
+| id | UUID | PK |
+| name | VARCHAR(100) | Obligatoire |
+| slug | VARCHAR(100) | Unique |
+| order | INTEGER | Facultatif (ordre d'affichage) |
+
+**Table `products`**
+
+| Colonne | Type | Contraintes |
+|---|---|---|
+| id | UUID | PK |
+| name | VARCHAR(150) | Obligatoire |
+| slug | VARCHAR(150) | Unique |
+| description | TEXT | Facultatif |
+| price | NUMERIC(10,2) | Obligatoire |
+| category_id | UUID | FK → categories.id |
+| image_url | TEXT | Facultatif |
+| is_available | BOOLEAN | Défaut true |
+| created_at | TIMESTAMP | Obligatoire |
+| updated_at | TIMESTAMP | Obligatoire |
+
+**Table `orders`**
+
+| Colonne | Type | Contraintes |
+|---|---|---|
+| id | UUID | PK |
+| user_id | UUID | FK → users.id |
+| status | VARCHAR(30) | Obligatoire |
+| reception_mode | VARCHAR(20) | PICKUP, DELIVERY |
+| scheduled_date | DATE | Obligatoire |
+| scheduled_time_slot | VARCHAR(50) | Obligatoire |
+| delivery_address | TEXT | Obligatoire si livraison |
+| total_amount | NUMERIC(10,2) | Obligatoire |
+| payment_status | VARCHAR(30) | PENDING, PAID, FAILED, REFUNDED |
+| created_at | TIMESTAMP | Obligatoire |
+| updated_at | TIMESTAMP | Obligatoire |
+
+**Table `order_items`**
+
+| Colonne | Type | Contraintes |
+|---|---|---|
+| id | UUID | PK |
+| order_id | UUID | FK → orders.id |
+| product_id | UUID | FK → products.id |
+| quantity | INTEGER | Obligatoire, > 0 |
+| unit_price | NUMERIC(10,2) | Obligatoire |
+| total_price | NUMERIC(10,2) | Obligatoire |
+
+### 6.2 Diagramme entité-association
+
+<img src="diagrams/er-diagram.png" alt="Schéma entité-association O2Passions" width="850"/>
+
+### 6.3 Règles d'intégrité
+
+- Un produit appartient à une et une seule catégorie.
+- Une commande appartient à un et un seul utilisateur.
+- Les lignes de commande (`order_items`) référencent une commande et un produit existants.
+- Le prix et la quantité sont toujours positifs.
+- La suppression d'un produit n'efface pas les lignes de commande historiques (pas de `ON DELETE CASCADE` sur `products` → `order_items`, ou utilisation de soft delete).
+
+---
+
+## 7. Diagrammes de séquence
+
+### 7.1 Consultation des produits
+
+<img src="diagrams/seq-consultation-produits.png" alt="Diagramme de séquence - Consultation des produits" width="850"/>
+
+### 7.2 Création d'une commande avec paiement
+
+<img src="diagrams/seq-creation-commande-paiement.png" alt="Diagramme de séquence - Création d'une commande avec paiement" width="850"/>
+
+Si le paiement échoue ou si le webhook Stripe signale un échec, l'API met la commande à jour avec `payment_status = FAILED` et aucune confirmation n'est envoyée au client.
+
+### 7.3 Mise à jour du statut d'une commande (back-office)
+
+<img src="diagrams/seq-maj-statut-commande.png" alt="Diagramme de séquence - Mise à jour du statut d'une commande" width="850"/>
+
+---
+
+## 8. APIs externes et spécifications des APIs internes
+
+### 8.1 APIs externes
+
+| API | Utilisation | Justification |
+|---|---|---|
+| Stripe | Paiement par carte bancaire (CB). | Solution éprouvée, documentation complète, conformité PCI déléguée. |
+| Google Maps (optionnel) | Affichage de la localisation et calcul d'itinéraire. | Améliore l'expérience client pour se rendre en boutique. |
+| Service d'envoi d'e-mails (ex. SendGrid, Mailgun) | Envoi des confirmations de commande, réinitialisation de mot de passe. | Évite de gérer un serveur SMTP, meilleure délivrabilité. |
+
+Dans le MVP, Stripe est indispensable. Google Maps et le service d'e-mails peuvent être intégrés progressivement.
+
+### 8.2 Format général des réponses API
+
+**Réponse réussie**
+
+```json
+{
+  "data": {},
+  "message": "Operation completed successfully"
+}
+```
+
+**Réponse d'erreur**
+
+```json
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid input data",
+    "details": []
+  }
+}
+```
+
+Codes HTTP principaux : `200`, `201`, `400`, `401`, `403`, `404`, `409`, `500`.
+
+### 8.3 Endpoints publics (client)
+
+**Authentification**
+
+| Méthode | URL | Entrée | Sortie |
+|---|---|---|---|
+| POST | `/api/auth/register` | `{ firstName, lastName, email, password, phone? }` | Utilisateur créé + token |
+| POST | `/api/auth/login` | `{ email, password }` | Token + profil utilisateur |
+| GET | `/api/auth/me` | Header `Authorization: Bearer <token>` | Profil utilisateur connecté |
+
+**Produits et catégories**
+
+| Méthode | URL | Entrée | Sortie |
+|---|---|---|---|
+| GET | `/api/categories` | — | Liste des catégories |
+| GET | `/api/products` | Query params : `categoryId?`, `search?`, `available?` | Liste des produits |
+| GET | `/api/products/:slug` | — | Détail d'un produit |
+
+**Panier** (si géré côté serveur — peut aussi être géré côté client via `localStorage` / état React, sans endpoints dédiés)
+
+| Méthode | URL |
+|---|---|
+| GET | `/api/cart` |
+| POST | `/api/cart/items` |
+| PATCH | `/api/cart/items/:itemId` |
+| DELETE | `/api/cart/items/:itemId` |
+
+**Commandes**
+
+| Méthode | URL | Entrée | Sortie |
+|---|---|---|---|
+| POST | `/api/orders` | `{ items: [{ productId, quantity }], receptionMode, scheduledDate, scheduledTimeSlot, deliveryAddress? }` | `{ orderId, clientSecret }` pour le paiement |
+| GET | `/api/orders` | — | Liste des commandes de l'utilisateur connecté |
+| GET | `/api/orders/:id` | — | Détail d'une commande |
+| POST | `/api/orders/:id/confirm-payment` | `{ paymentIntentId }` | Confirmation de paiement |
+
+### 8.4 Endpoints administrateur (back-office)
+
+Tous protégés et réservés aux utilisateurs avec `role = ADMIN`.
+
+| Méthode | URL | Entrée / Query | Sortie |
+|---|---|---|---|
+| GET | `/api/admin/products` | — | Liste des produits |
+| POST | `/api/admin/products` | Données produit | Produit créé |
+| GET | `/api/admin/products/:id` | — | Détail produit |
+| PATCH | `/api/admin/products/:id` | Champs à modifier | Produit modifié |
+| DELETE | `/api/admin/products/:id` | — | Suppression (ou soft delete) |
+| GET | `/api/admin/orders` | `status?`, `receptionMode?`, `dateFrom?`, `dateTo?` | Liste des commandes |
+| GET | `/api/admin/orders/:id` | — | Détail d'une commande |
+| PATCH | `/api/admin/orders/:id` | `{ status?, paymentStatus? }` | Commande modifiée |
+| POST | `/api/admin/orders/:id/cancel` | `{ reason }` | Confirmation d'annulation |
+
+---
+
+## 9. Stratégie SCM et QA
+
+### 9.1 SCM (Source Control Management)
+
+**Outil :** Git + GitHub.
+
+**Stratégie de branches :**
+
+```text
+main
+`-- develop
+    |-- feature/auth
+    |-- feature/products
+    |-- feature/orders
+    |-- feature/admin
+    `-- fix/payment-webhook
+```
+
+| Branche | Utilisation |
+|---|---|
+| main | Version stable en production. |
+| develop | Intégration des fonctionnalités validées. |
+| feature/* | Développement d'une fonctionnalité isolée. |
+| fix/* | Corrections de bugs. |
+| release/* | Préparation d'une version (optionnel). |
+
+**Règles de contribution :**
+
+- Pas de commit direct sur `main` ni `develop`.
+- Chaque fonctionnalité sur une branche `feature/*`.
+- Pull Request obligatoire avec :
+  - Description claire.
+  - Tests associés.
+  - Au moins une revue de code.
+- CI obligatoire : lint, type-check, tests unitaires et d'intégration.
+- Secrets et clés API dans des variables d'environnement, jamais dans Git.
+
+### 9.2 QA (Quality Assurance)
+
+**Types de tests :**
+
+| Type | Objectif | Outils |
+|---|---|---|
+| Tests unitaires | Fonctions, services, utilitaires. | Jest |
+| Tests de composants React | Rendu et interactions UI. | React Testing Library |
+| Tests d'intégration API | Endpoints, validation, erreurs. | Jest + Supertest |
+| Tests end-to-end | Parcours complets (commande, paiement test). | Playwright |
+| Tests manuels | Validation ergonomique et cas limites. | Environnement staging |
+| Analyse statique | Qualité du code, règles de style. | ESLint, Prettier, TypeScript |
+
+**Couverture minimale cible (MVP) :**
+
+- Services métier (auth, produits, commandes, paiement).
+- Contrôleurs / routes principales.
+- Composants critiques (panier, checkout, formulaire de commande).
+
+**Pipeline CI/CD (GitHub Actions) :**
+
+1. Déclenché à chaque push / PR.
+2. Installation des dépendances.
+3. Lint et vérification TypeScript.
+4. Tests unitaires et d'intégration.
+5. Build du front-end et de l'API.
+6. Déploiement automatique en staging sur `develop`.
+7. Déploiement en production depuis `main` après validation.
+
+**Environnements :**
+
+- **Dev** : local, avec base de données de test.
+- **Staging** : miroir de la production, données fictives, utilisé pour les tests finaux.
+- **Production** : accessible aux clients, avec sauvegardes et monitoring.
+
+---
+
+## 10. Justifications techniques
+
+**Next.js (React + TypeScript)**
+- Rendu serveur (SSR) et génération statique possibles, ce qui améliore le SEO et les performances.
+- Écosystème React riche (composants, bibliothèques).
+- TypeScript permet de détecter des erreurs de typage tôt et d'améliorer la maintenabilité.
+
+**Node.js avec NestJS ou Express**
+- Même langage (TypeScript/JavaScript) côté front et back.
+- NestJS propose une architecture modulaire (controllers, services, modules) proche de celle d'Angular ou Spring, utile pour un projet qui peut grandir.
+- Express reste une alternative plus légère si l'équipe le préfère.
+
+**PostgreSQL**
+- Base de données relationnelle mature, adaptée aux données structurées (utilisateurs, produits, commandes).
+- Support des contraintes, transactions et requêtes complexes.
+- Bonnes performances et évolutivité pour un commerce local.
+
+**Stripe pour le paiement**
+- Conforme aux normes de sécurité (PCI DSS).
+- Intégration documentée et SDKs disponibles.
+- Gestion des webhooks pour synchroniser les statuts de paiement.
+
+**Architecture en couches**
+- Séparation claire entre :
+  - Contrôleurs (routes HTTP).
+  - Services (logique métier).
+  - Répositories / modèles (accès aux données).
+- Facilite les tests, la maintenance et l'évolution (ajout de nouvelles fonctionnalités, refactorings).
+
+**CI/CD et tests automatisés**
+- Détection rapide des régressions.
+- Déploiements plus sûrs et reproductibles.
+- Réduction du risque d'erreurs humaines lors des mises en production.
+
+---
+
+## 11. Sécurité et évolutions futures
+
+### Sécurité
+
+- HTTPS obligatoire.
+- Hachage des mots de passe (ex. bcrypt, argon2).
+- Validation stricte des entrées (schema validation).
+- Protection des routes admin par rôle.
+- Limitation des tentatives de connexion (rate limiting).
+- Requêtes paramétrées pour éviter les injections SQL.
+- Gestion sécurisée des clés API et secrets (variables d'environnement).
+- Journalisation des erreurs et des actions sensibles.
+
+### Évolutions possibles
+
+- Programme de fidélité (points, offres personnalisées).
+- Gestion des stocks en temps réel.
+- Pré-commandes pour événements (gâteaux personnalisés).
+- Intégration avec un système de caisse en magasin.
+- Multi-boutiques avec gestion par point de vente.
+- Application mobile ou PWA pour une expérience mobile améliorée.
+
+---
+
+Cette documentation constitue un socle technique complet pour le site O2Passions. Elle peut être adaptée en fonction des contraintes réelles (budget, équipe, délais, outils existants) tout en conservant la même structure : User Stories, maquettes, architecture, modèle de données, APIs, SCM/QA et justifications techniques.
