@@ -1,6 +1,6 @@
 # Documentation technique — Site web O2Passions (boulangerie-pâtisserie)
 
-**Projet :** O2Passions — Site web d'une boulangerie-pâtisserie permettant de présenter les produits, informer sur les horaires et la localisation, et passer des commandes en ligne (retrait en boutique ou livraison locale).
+**Projet :** O2Passions — Site web d'une boulangerie-pâtisserie permettant de présenter les produits, informer sur les horaires et la localisation, et passer des commandes en ligne (retrait en boutique).
 
 **Objectif du MVP :** Offrir une vitrine numérique claire et permettre la prise de commande simple, tout en restant facile à maintenir et à faire évoluer.
 
