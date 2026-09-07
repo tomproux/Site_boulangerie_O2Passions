@@ -1,4 +1,4 @@
-=================================================================================
+================================================================================
                            DOCUMENTATION TECHNIQUE
                         PROJET : SITE WEB O2 PASSIONS
 ================================================================================
@@ -309,12 +309,26 @@ Interactions principales :
 --------------------------------------------------------------------------------
 4.2 Diagramme d'architecture
 --------------------------------------------------------------------------------
+Vue simplifiee :
+
     Client (navigateur) --(HTTPS)--> Front-end React
     Front-end React --(REST/JSON)--> API Node.js / Express
     API --> Service d'authentification
     API --> PostgreSQL (base de donnees)
     API --> Service de journalisation
     API --(optionnel, hors MVP)--> Service de paiement en ligne
+
+Diagramme (syntaxe Mermaid, a coller dans un editeur compatible comme
+mermaid.live, Notion, GitHub ou un artefact Markdown) :
+
+    flowchart LR
+        U[Client] -->|HTTPS| FE[Front-end React]
+        FE -->|REST/JSON| API[API Node.js / Express]
+        API --> AUTH[Service d'authentification]
+        API --> DB[(PostgreSQL)]
+        API --> LOG[Service de journalisation]
+        API -.->|hors MVP| PAY[Service de paiement en ligne]
+        API --> MAIL[Service d'e-mail]
 
 --------------------------------------------------------------------------------
 4.3 Flux de donnees
@@ -570,6 +584,8 @@ metier et l'acces aux donnees.
 --------------------------------------------------------------------------------
 6.5 Relations
 --------------------------------------------------------------------------------
+Vue simplifiee :
+
   USERS (1) ------- owns -------< (0..1) CARTS
   CARTS (1) ------- contains ----< (0..N) ORDER_ITEMS
   PRODUCTS (1) ---- referenced by < (0..N) ORDER_ITEMS
@@ -577,6 +593,55 @@ metier et l'acces aux donnees.
 Un utilisateur possede au plus un panier actif. Un panier contient zero,
 une ou plusieurs lignes de commande. Chaque ligne de commande fait
 reference a un seul produit du catalogue.
+
+Diagramme entite-relation (syntaxe Mermaid) :
+
+    erDiagram
+        USERS ||--o| CARTS : owns
+        CARTS ||--o{ ORDER_ITEMS : contains
+        PRODUCTS ||--o{ ORDER_ITEMS : referenced_by
+
+        USERS {
+            uuid id PK
+            varchar first_name
+            varchar last_name
+            varchar email UK
+            text password_hash
+            varchar role
+            timestamp created_at
+            timestamp updated_at
+        }
+
+        CARTS {
+            uuid id PK
+            uuid user_id FK
+            timestamp created_at
+            timestamp updated_at
+        }
+
+        PRODUCTS {
+            uuid id PK
+            varchar name
+            text description
+            numeric price
+            varchar category
+            boolean available
+            text image_url
+            timestamp created_at
+            timestamp updated_at
+        }
+
+        ORDER_ITEMS {
+            uuid id PK
+            uuid cart_id FK
+            uuid product_id FK
+            integer number_of_people
+            date pickup_date
+            time pickup_time
+            varchar status
+            timestamp created_at
+            timestamp updated_at
+        }
 
 --------------------------------------------------------------------------------
 6.6 Valeurs autorisees
@@ -620,6 +685,25 @@ reference a un seul produit du catalogue.
   8. API           -> Front-end   : 200 + token
   9. Front-end     -> Utilisateur : afficher l'espace client
 
+Diagramme (syntaxe Mermaid) :
+
+    sequenceDiagram
+        actor User as Utilisateur
+        participant FE as Front-end React
+        participant API as API Express
+        participant Auth as AuthService
+        participant DB as PostgreSQL
+
+        User->>FE: Saisit e-mail et mot de passe
+        FE->>API: POST /api/auth/login
+        API->>Auth: Verifier les identifiants
+        Auth->>DB: Rechercher l'utilisateur par e-mail
+        DB-->>Auth: Donnees utilisateur
+        Auth->>Auth: Comparer le mot de passe
+        Auth-->>API: Generer un JWT
+        API-->>FE: 200 + token
+        FE-->>User: Afficher l'espace client
+
 --------------------------------------------------------------------------------
 7.2 Consultation du catalogue
 --------------------------------------------------------------------------------
@@ -633,6 +717,24 @@ reference a un seul produit du catalogue.
   6. ProductService-> API              : produits filtres
   7. API           -> Front-end        : 200 + JSON
   8. Front-end     -> Utilisateur      : afficher les produits par onglet
+
+Diagramme (syntaxe Mermaid) :
+
+    sequenceDiagram
+        actor User as Utilisateur
+        participant FE as Front-end React
+        participant API as API Express
+        participant Service as ProductService
+        participant DB as PostgreSQL
+
+        User->>FE: Ouvre la page catalogue / choisit un onglet
+        FE->>API: GET /api/products?category=...
+        API->>Service: findByCategory(category)
+        Service->>DB: SELECT products WHERE category = ... AND available = true
+        DB-->>Service: Liste des produits
+        Service-->>API: Produits filtres
+        API-->>FE: 200 + JSON
+        FE-->>User: Afficher les produits de la categorie
 
 --------------------------------------------------------------------------------
 7.3 Creation d'une commande (ajout au panier)
@@ -658,6 +760,29 @@ reference a un seul produit du catalogue.
 Si le delai de 48h n'est pas respecte ou si le produit n'est pas
 disponible, l'API retourne une erreur 400 et aucune ecriture n'est
 effectuee.
+
+Diagramme (syntaxe Mermaid) :
+
+    sequenceDiagram
+        actor User as Utilisateur
+        participant FE as Front-end React
+        participant API as API Express
+        participant MW as AuthMiddleware
+        participant Service as OrderService
+        participant DB as PostgreSQL
+
+        User->>FE: Remplit le formulaire (produit, nb personnes, date, heure)
+        FE->>API: POST /api/orders avec JSON et JWT
+        API->>MW: Verifier le JWT
+        MW-->>API: userId authentifie
+        API->>Service: Valider produit disponible et delai de 48h
+        Service->>DB: Verifier la disponibilite du produit
+        Service->>DB: Creer ou recuperer le panier de l'utilisateur
+        Service->>DB: INSERT INTO order_items
+        DB-->>Service: Ligne de commande creee
+        Service-->>API: Objet commande
+        API-->>FE: 201 + JSON
+        FE-->>User: Afficher un message de succes
 
 
 ================================================================================
