@@ -103,43 +103,35 @@ Exclu du MVP :
 2.2 SHOULD HAVE - Important
 --------------------------------------------------------------------------------
 
-[US-07] Filtrer les taches
-  En tant qu'utilisateur connecte, je veux filtrer mes taches par statut ou
-  priorite, afin de trouver rapidement une tache particuliere.
+[US-07] Rechercher une commande
+  En tant qu'utilisateur connecté, je veux rechercher une commande par son titre, afin de la retrouver rapidement.
 
-[US-08] Rechercher une tache
-  En tant qu'utilisateur connecte, je veux rechercher une tache par son
-  titre, afin de la retrouver rapidement.
-
-[US-09] Consulter les statistiques
-  En tant qu'utilisateur connecte, je veux voir le nombre de taches
-  terminees et en cours, afin de suivre ma progression.
+[US-08] Consulter les commandes déjà passer
+  En tant qu'utilisateur connecté, je veux voir les commandes précédemment effectuées.
 
 --------------------------------------------------------------------------------
 2.3 COULD HAVE - Souhaitable
 --------------------------------------------------------------------------------
 
-[US-10] Ajouter une date limite
-  En tant qu'utilisateur connecte, je veux ajouter une date limite a une
-  tache, afin de mieux planifier mon travail.
+[US-09] Ajouter une date limite
+  En tant qu'utilisateur connecté, je veux ajouter une date limite a une commande, afin de mieux planifier celle-ci.
+  Criteres d'acceptation :
+    - 48h avant la réception de la commande
 
-[US-11] Categoriser une tache
-  En tant qu'utilisateur connecte, je veux associer une categorie a une
-  tache, afin de classer mon travail.
+[US-10] Paiement en ligne
+En tant qu'utilisateur connecté, je veux avoir accès à un paiement en ligne, afin de pouvoir payer à l'avance.
 
 --------------------------------------------------------------------------------
 2.4 WON'T HAVE - Hors perimetre du MVP
 --------------------------------------------------------------------------------
 
-[US-12] Collaboration
-  En tant qu'utilisateur, je veux partager une tache avec d'autres
-  utilisateurs, afin de travailler en equipe.
-  --> Fonctionnalite volontairement exclue de la premiere version.
+[US-11] Application mobile
+  En tant qu'utilisateur, je veux avoir accés à une application mobile, afin que le passage de commande puisse être effectué depuis un smartphone.
+  --> Fonctionnalité volontairement exclue de la première version.
 
-[US-13] Notifications en temps reel
-  En tant qu'utilisateur, je veux recevoir des notifications en temps reel,
-  afin d'etre informe immediatement des changements.
-  --> Fonctionnalite pouvant etre etudiee dans une version ulterieure.
+[US-12] Notifications en temps reel
+  En tant qu'utilisateur, je veux recevoir des notifications en temps réel, afin d'être informé immédiatement des changements.
+  --> Fonctionnalité pouvant être étudiée dans une version ulterieure.
 
 
 ================================================================================
