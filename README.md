@@ -1,9 +1,18 @@
-================================================================================
+=================================================================================
                            DOCUMENTATION TECHNIQUE
-                        PROJET : Site Web Ô2 Passions
+                        PROJET : SITE WEB O2 PASSIONS
 ================================================================================
 
-Cette documentation technique montre les différents point de la fabrication du Site Web “Ô2 Passions”.
+Site web de consultation et de commande en ligne pour la boulangerie
+"O2 Passions".
+
+Cette documentation reprend le contenu fourni (presentation du projet et
+User Stories) et le complete avec les elements techniques necessaires a la
+realisation du MVP : maquettes, architecture, modele de donnees, diagrammes
+de sequence, specifications API, strategies SCM et QA. Les choix
+technologiques proposes sont des exemples adaptables selon les contraintes
+reelles du projet.
+
 
 ================================================================================
 1. PRESENTATION DU PROJET
@@ -12,37 +21,46 @@ Cette documentation technique montre les différents point de la fabrication du 
 --------------------------------------------------------------------------------
 1.1 Objectif
 --------------------------------------------------------------------------------
-L’idée principale retenue de ce projet consiste à la création d’un site web de consultation et de commande en ligne pour la boulangerie “Ô2 Passions”.
+L'idee principale retenue pour ce projet consiste en la creation d'un site
+web de consultation et de commande en ligne pour la boulangerie
+"O2 Passions".
 
-L'objectif du MVP est de proposer une version simple, fonctionnelle et evolutive avec les fonctionnalités essentielles :
+L'objectif du MVP est de proposer une version simple, fonctionnelle et
+evolutive avec les fonctionnalites essentielles :
 
-  - Création de compte client
-  - Connexion à l'aide de l'identifiant et du mot de passe du compte client 
-  - Consultation du catalogue des produits proposés par la boulangerie "Ô2 Passions"
-  - Passage de commande en ligne avec un système de paniers
+  - Creation de compte client
+  - Connexion a l'aide de l'identifiant et du mot de passe du compte client
+  - Consultation du catalogue des produits proposes par la boulangerie
+    "O2 Passions"
+  - Passage de commande en ligne avec un systeme de panier
 
-    Notes:
-      - Pour la partie consultation il y aura une partie    visuelle sur les différents produits (viennoiseries, pains, pâtisseries et ventes additionnelles) à partir de différents onglets.
-      - Pour la partie commande, il y aura un compte pour chaque utilisateur sur lequel ils pourront passer commande à partir du catalogue de produit.
-
+Notes :
+  - Pour la partie consultation, une presentation visuelle des differents
+    produits (viennoiseries, pains, patisseries et ventes additionnelles)
+    sera organisee par onglets.
+  - Pour la partie commande, chaque utilisateur dispose d'un compte lui
+    permettant de passer commande a partir du catalogue de produits.
 
 --------------------------------------------------------------------------------
 1.2 Types d'utilisateurs
 --------------------------------------------------------------------------------
-  - Utilisateur: Crée un compte, consulte le catalogue des produits, passe une commande, modifie une commande, la supprimme une commande
-  - Administrateur: Consulte l'etat general du systeme et peut gerer les utilisateurs si cette fonctionnalite est activée.
+  Utilisateur     : Cree un compte, consulte le catalogue des produits,
+                    passe une commande, modifie une commande, supprime une
+                    commande.
+  Administrateur  : Consulte l'etat general du systeme et peut gerer les
+                    utilisateurs si cette fonctionnalite est activee.
 
 --------------------------------------------------------------------------------
-1.3 Périmètre du MVP
+1.3 Perimetre du MVP
 --------------------------------------------------------------------------------
 Inclus dans le MVP :
   - Authentification par adresse e-mail et mot de passe
   - Gestion des utilisateurs
-  - Aperçu du catalogue des produits
+  - Apercu du catalogue des produits
   - Gestion des commandes via un panier
 
 Exclu du MVP :
-  - Paiement en ligne
+  - Paiement en ligne (extension future)
   - Application mobile (extension future)
   - Notifications push (extension future)
 
@@ -55,83 +73,108 @@ Exclu du MVP :
 2.1 MUST HAVE - Indispensable
 --------------------------------------------------------------------------------
 
-[US-01] Création de compte
-  En tant qu'utilisateur, je veux creer un compte, afin d'accéder à l'application.
-  Critères d'acceptation :
-    - L'utilisateur saisit son prénom, son nom, son adresse e-mail et son mot de passe
-    - L'adresse e-mail doit être validé et unique
-    - Le mot de passe doit respecter les règles de sécurité definies
-    - Un compte est créé lorsque les données sont valides
-    - Une erreur explicite est affichée en cas de données invalides
+[US-01] Creation de compte
+  En tant qu'utilisateur, je veux creer un compte, afin d'acceder a
+  l'application.
+  Criteres d'acceptation :
+    - L'utilisateur saisit son prenom, son nom, son adresse e-mail et son
+      mot de passe
+    - L'adresse e-mail doit etre validee et unique
+    - Le mot de passe doit respecter les regles de securite definies
+    - Un compte est cree lorsque les donnees sont valides
+    - Une erreur explicite est affichee en cas de donnees invalides
 
 [US-02] Connexion
-  En tant qu'utilisateur, je veux me connecter, afin d'accéder à mon espace client.
-  Critères d'acceptation :
+  En tant qu'utilisateur, je veux me connecter, afin d'acceder a mon
+  espace client.
+  Criteres d'acceptation :
     - L'utilisateur saisit son adresse e-mail et son mot de passe
-    - Les identifiants sont verifiés par le back-end
-    - Un jeton d'authentification est retourné en cas de succès
-    - L'utilisateur est redirigé vers son espace client
+    - Les identifiants sont verifies par le back-end
+    - Un jeton d'authentification est retourne en cas de succes
+    - L'utilisateur est redirige vers son espace client
     - Un message d'erreur apparait si les identifiants sont incorrects
 
-[US-03] Créer une commande
-  En tant qu'utilisateur connecté, je veux créer une commande, afin d'organiser mon travail.
-  Critères d'acceptation :
+[US-03] Creer une commande
+  En tant qu'utilisateur connecte, je veux creer une commande, afin
+  d'organiser mon travail.
+  Criteres d'acceptation :
     - Le produit est disponible dans le catalogue des produits du magasin
-    - Le nombre de personnes doit être indiqué
-    - La date ainsi que l'heure de la commande doivent être indiquées
-    - La commande doit être effectuer 48h avant la récupération de celle-ci
+    - Le nombre de personnes doit etre indique
+    - La date ainsi que l'heure de la commande doivent etre indiquees
+    - La commande doit etre effectuee 48h avant la recuperation de
+      celle-ci
 
 [US-04] Consulter mon panier
-  En tant qu'utilisateur connecté, je veux consulter mon panier, afin de connaitre les commandes réalisées.
-  Critères d'acceptation :
-    - Un panier est créé si le nombre de commandes est supérieur ou égale à 1
-    - Le panier est consultable seulement par l'utilisateur l'ayant créé
+  En tant qu'utilisateur connecte, je veux consulter mon panier, afin de
+  connaitre les commandes realisees.
+  Criteres d'acceptation :
+    - Un panier est cree si le nombre de commandes est superieur ou egal
+      a 1
+    - Le panier est consultable seulement par l'utilisateur l'ayant cree
 
 [US-05] Modifier une commande
-  En tant qu'utilisateur connecté, je veux modifier une commande, afin de modifier les commandes qui ne me plaisent plus.
+  En tant qu'utilisateur connecte, je veux modifier une commande, afin de
+  modifier les commandes qui ne me plaisent plus.
   Criteres d'acceptation :
     - Avoir cette commande dans son panier
-    - Le faire 48h avant la réception de la commande
+    - Le faire 48h avant la reception de la commande
 
 [US-06] Supprimer une commande
-  En tant qu'utilisateur connecté, je veux supprimer une commande, afin de retirer les commandes que je ne souhaitent plus.
+  En tant qu'utilisateur connecte, je veux supprimer une commande, afin
+  de retirer les commandes que je ne souhaite plus.
   Criteres d'acceptation :
     - Avoir cette commande dans son panier
-    - Le faire 48h avant la réception de la commande
+    - Le faire 48h avant la reception de la commande
 
 --------------------------------------------------------------------------------
 2.2 SHOULD HAVE - Important
 --------------------------------------------------------------------------------
 
 [US-07] Rechercher une commande
-  En tant qu'utilisateur connecté, je veux rechercher une commande par son titre, afin de la retrouver rapidement.
+  En tant qu'utilisateur connecte, je veux rechercher une commande par son
+  titre, afin de la retrouver rapidement.
+  Criteres d'acceptation :
+    - La recherche s'effectue parmi les commandes du panier de
+      l'utilisateur connecte
+    - Le resultat s'affiche des la saisie des premieres lettres
 
-[US-08] Consulter les commandes déjà passer
-  En tant qu'utilisateur connecté, je veux voir les commandes précédemment effectuées.
+[US-08] Consulter les commandes deja passees
+  En tant qu'utilisateur connecte, je veux voir les commandes precedemment
+  effectuees.
+  Criteres d'acceptation :
+    - Seules les commandes de l'utilisateur connecte sont affichees
+    - Les commandes sont triees par date, de la plus recente a la plus
+      ancienne
 
 --------------------------------------------------------------------------------
 2.3 COULD HAVE - Souhaitable
 --------------------------------------------------------------------------------
 
 [US-09] Ajouter une date limite
-  En tant qu'utilisateur connecté, je veux ajouter une date limite a une commande, afin de mieux planifier celle-ci.
+  En tant qu'utilisateur connecte, je veux ajouter une date limite a une
+  commande, afin de mieux planifier celle-ci.
   Criteres d'acceptation :
-    - 48h avant la réception de la commande
+    - La date limite doit respecter le delai de 48h avant la reception
+      de la commande
 
 [US-10] Paiement en ligne
-En tant qu'utilisateur connecté, je veux avoir accès à un paiement en ligne, afin de pouvoir payer à l'avance.
+  En tant qu'utilisateur connecte, je veux avoir acces a un paiement en
+  ligne, afin de pouvoir payer a l'avance.
 
 --------------------------------------------------------------------------------
 2.4 WON'T HAVE - Hors perimetre du MVP
 --------------------------------------------------------------------------------
 
 [US-11] Application mobile
-  En tant qu'utilisateur, je veux avoir accés à une application mobile, afin que le passage de commande puisse être effectué depuis un smartphone.
-  --> Fonctionnalité volontairement exclue de la première version.
+  En tant qu'utilisateur, je veux avoir acces a une application mobile,
+  afin que le passage de commande puisse etre effectue depuis un
+  smartphone.
+  --> Fonctionnalite volontairement exclue de la premiere version.
 
 [US-12] Notifications en temps reel
-  En tant qu'utilisateur, je veux recevoir des notifications en temps réel, afin d'être informé immédiatement des changements.
-  --> Fonctionnalité pouvant être étudiée dans une version ulterieure.
+  En tant qu'utilisateur, je veux recevoir des notifications en temps
+  reel, afin d'etre informe immediatement des changements.
+  --> Fonctionnalite pouvant etre etudiee dans une version ulterieure.
 
 
 ================================================================================
@@ -144,8 +187,8 @@ prevues pour les ecrans principaux.
 --------------------------------------------------------------------------------
 3.1 Ecran de connexion
 --------------------------------------------------------------------------------
-    +---------------------------------------+
-    |              TASKFLOW                 |
+    +--------------------------------------+
+    |             O2 PASSIONS               |
     |                                       |
     |  Adresse e-mail                       |
     |  [____________________________]       |
@@ -156,70 +199,89 @@ prevues pour les ecrans principaux.
     |          [ Se connecter ]             |
     |                                       |
     |  Creer un compte                      |
-    +---------------------------------------+
-
---------------------------------------------------------------------------------
-3.2 Tableau de bord
---------------------------------------------------------------------------------
-    +------------------------------------------------+
-    | TASKFLOW          Bonjour, Alice   Deconnexion  |
-    +------------------------------------------------+
-    | Mes taches                                      |
-    |                                                  |
-    | [ + Nouvelle tache ]  [ Rechercher_________ ]    |
-    |                                                  |
-    | Filtre : [Toutes] [A faire] [En cours] [Terminees]
-    |                                                  |
-    | Titre                Priorite   Statut   Actions |
-    | Acheter du pain       Haute     A faire  Modifier|
-    | Preparer le rapport   Moyenne   En cours Modifier|
-    |                                                  |
-    | Total : 2         Terminees : 0                  |
-    +------------------------------------------------+
-
---------------------------------------------------------------------------------
-3.3 Formulaire de creation ou modification
---------------------------------------------------------------------------------
-    +--------------------------------------+
-    | Nouvelle tache                        |
-    |                                       |
-    | Titre *                               |
-    | [____________________________]        |
-    |                                       |
-    | Description                           |
-    | [____________________________]        |
-    | [____________________________]        |
-    |                                       |
-    | Priorite                              |
-    | [ Moyenne                  v ]        |
-    |                                       |
-    | Statut                                |
-    | [ A faire                  v ]        |
-    |                                       |
-    | [ Annuler ]        [ Enregistrer ]    |
     +--------------------------------------+
 
 --------------------------------------------------------------------------------
-3.4 Composants front-end
+3.2 Catalogue des produits
 --------------------------------------------------------------------------------
-  - App           : composant racine de l'application
-  - Navbar        : navigation et deconnexion
-  - LoginForm     : formulaire de connexion
-  - RegisterForm  : formulaire d'inscription
-  - Dashboard     : affichage principal des taches
-  - TaskList      : liste des taches
-  - TaskCard      : representation individuelle d'une tache
-  - TaskForm      : creation et modification d'une tache
-  - FilterBar     : filtrage par statut et priorite
-  - Toast         : affichage des messages de succes ou d'erreur
-  - ProtectedRoute: protection des pages necessitant une authentification
+    +------------------------------------------------+
+    | O2 PASSIONS         Bonjour, Alice   Deconnexion|
+    +------------------------------------------------+
+    | [Viennoiseries] [Pains] [Patisseries] [Ventes   |
+    |                                    additionnelles]|
+    |                                                  |
+    |  +-----------+  +-----------+  +-----------+     |
+    |  | Croissant |  | Pain au   |  | Chausson  |     |
+    |  | 1,20 EUR  |  | chocolat  |  | aux pommes|     |
+    |  |[Ajouter]  |  | 1,30 EUR  |  | 1,50 EUR  |     |
+    |  |           |  |[Ajouter]  |  |[Ajouter]  |     |
+    |  +-----------+  +-----------+  +-----------+     |
+    |                                                  |
+    |                          [ Voir mon panier (3) ] |
+    +------------------------------------------------+
+
+--------------------------------------------------------------------------------
+3.3 Panier / formulaire de commande
+--------------------------------------------------------------------------------
+    +--------------------------------------+
+    | Mon panier                            |
+    |                                       |
+    | Produit           Nb pers.  Retrait   |
+    | Croissant x4        4      12/09 08h  | [Modifier][Suppr.]
+    | Tarte aux fraises   6      13/09 10h  | [Modifier][Suppr.]
+    |                                       |
+    | Nouvelle ligne de commande :          |
+    | Produit *                             |
+    | [ Selectionner un produit      v ]    |
+    | Nombre de personnes *                 |
+    | [____]                                |
+    | Date de retrait *      Heure *        |
+    | [__/__/____]            [__:__]       |
+    |                                       |
+    | [ Annuler ]        [ Valider commande]|
+    +--------------------------------------+
+    Note : la date/heure de retrait doit se situer au moins 48h apres la
+    validation de la commande ; un message d'erreur est affiche sinon.
+
+--------------------------------------------------------------------------------
+3.4 Espace client - historique des commandes
+--------------------------------------------------------------------------------
+    +------------------------------------------------+
+    | O2 PASSIONS         Bonjour, Alice   Deconnexion|
+    +------------------------------------------------+
+    | Mes commandes                                   |
+    |                                                  |
+    | [Rechercher_____________]                        |
+    |                                                  |
+    | Produit          Retrait      Statut             |
+    | Croissant x4     12/09 08h    A venir            |
+    | Baguette x2      05/09 09h    Recuperee          |
+    +------------------------------------------------+
+
+--------------------------------------------------------------------------------
+3.5 Composants front-end
+--------------------------------------------------------------------------------
+  - App             : composant racine de l'application
+  - Navbar          : navigation et deconnexion
+  - LoginForm       : formulaire de connexion
+  - RegisterForm    : formulaire d'inscription
+  - CatalogPage     : affichage du catalogue par onglets de categorie
+  - CategoryTabs    : onglets Viennoiseries / Pains / Patisseries /
+                      Ventes additionnelles
+  - ProductCard     : representation individuelle d'un produit
+  - CartPage        : affichage du panier de l'utilisateur
+  - CartItem        : ligne de commande dans le panier
+  - OrderForm       : creation ou modification d'une ligne de commande
+  - OrderHistory    : historique des commandes passees
+  - Toast           : affichage des messages de succes ou d'erreur
+  - ProtectedRoute  : protection des pages necessitant une authentification
 
 Interactions principales :
   1. LoginForm envoie les identifiants au service d'authentification.
-  2. Dashboard demande les taches au back-end.
-  3. TaskForm cree ou modifie une tache.
-  4. TaskList actualise l'affichage apres une operation reussie.
-  5. FilterBar applique les parametres de recherche a la liste.
+  2. CatalogPage demande la liste des produits au back-end.
+  3. ProductCard ajoute un produit au panier via OrderForm.
+  4. OrderForm valide la regle des 48h avant d'envoyer la commande.
+  5. CartPage actualise l'affichage apres une operation reussie.
 
 
 ================================================================================
@@ -227,43 +289,45 @@ Interactions principales :
 ================================================================================
 
 --------------------------------------------------------------------------------
-4.1 Technologies retenues
+4.1 Technologies retenues (proposition)
 --------------------------------------------------------------------------------
   Front-end         : React avec TypeScript
-                        -> Interface utilisateur interactive
+                        -> Interface utilisateur interactive (catalogue,
+                           panier, espace client)
   Back-end          : Node.js avec Express
-                        -> API REST et logique metier
+                        -> API REST et logique metier (regle des 48h,
+                           gestion du panier)
   Base de donnees   : PostgreSQL
-                        -> Stockage structure des utilisateurs et des taches
+                        -> Stockage structure des utilisateurs, produits
+                           et commandes
   Authentification  : JWT avec mots de passe haches
-                        -> Identification securisee des utilisateurs
+                        -> Identification securisee des clients
   Tests front-end   : Jest et React Testing Library
-                        -> Tests des composants et comportements
   Tests API         : Jest / Supertest et Postman
-                        -> Tests automatises et tests manuels
   Deploiement       : Docker et GitHub Actions
-                        -> Reproductibilite et integration continue
 
 --------------------------------------------------------------------------------
 4.2 Diagramme d'architecture
 --------------------------------------------------------------------------------
-    Utilisateur --(HTTPS)--> Front-end React
+    Client (navigateur) --(HTTPS)--> Front-end React
     Front-end React --(REST/JSON)--> API Node.js / Express
     API --> Service d'authentification
     API --> PostgreSQL (base de donnees)
     API --> Service de journalisation
-    API --(optionnel)--> API externe
+    API --(optionnel, hors MVP)--> Service de paiement en ligne
 
 --------------------------------------------------------------------------------
 4.3 Flux de donnees
 --------------------------------------------------------------------------------
-  1. L'utilisateur interagit avec l'application React.
+  1. L'utilisateur consulte le catalogue via l'application React.
   2. Le front-end envoie une requete HTTPS a l'API REST.
-  3. Le middleware verifie le jeton JWT.
+  3. Le middleware verifie le jeton JWT pour les actions necessitant une
+     authentification (panier, commandes, espace client).
   4. Le controleur appelle le service metier approprie.
-  5. Le service metier lit ou modifie les donnees PostgreSQL.
+  5. Le service metier verifie les regles de gestion (produit disponible,
+     delai de 48h) puis lit ou modifie les donnees PostgreSQL.
   6. L'API retourne une reponse JSON.
-  7. Le front-end met a jour l'interface.
+  7. Le front-end met a jour l'interface (catalogue, panier ou historique).
 
 Les communications entre le navigateur et le serveur utilisent HTTPS.
 Les echanges applicatifs utilisent JSON.
@@ -276,13 +340,15 @@ Les echanges applicatifs utilisent JSON.
 --------------------------------------------------------------------------------
 5.1 User
 --------------------------------------------------------------------------------
-Responsabilite : representer un utilisateur du systeme.
+Responsabilite : representer un client ou un administrateur du systeme.
 
 Attributs :
   - id: UUID
-  - name: string
+  - firstName: string
+  - lastName: string
   - email: string
   - passwordHash: string
+  - role: UserRole (CLIENT | ADMIN)
   - createdAt: Date
   - updatedAt: Date
 
@@ -293,30 +359,70 @@ Methodes :
   - generateToken()
 
 --------------------------------------------------------------------------------
-5.2 Task
+5.2 Product
 --------------------------------------------------------------------------------
-Responsabilite : representer une tache appartenant a un utilisateur.
+Responsabilite : representer un produit du catalogue de la boulangerie.
+
+Attributs :
+  - id: UUID
+  - name: string
+  - description: string | null
+  - price: number
+  - category: ProductCategory (VIENNOISERIE | PAIN | PATISSERIE |
+    VENTE_ADDITIONNELLE)
+  - available: boolean
+  - imageUrl: string | null
+  - createdAt: Date
+  - updatedAt: Date
+
+Methodes :
+  - findAll(filters)
+  - findById(id)
+  - findByCategory(category)
+
+--------------------------------------------------------------------------------
+5.3 Cart (Panier)
+--------------------------------------------------------------------------------
+Responsabilite : regrouper les lignes de commande en cours d'un
+utilisateur.
 
 Attributs :
   - id: UUID
   - userId: UUID
-  - title: string
-  - description: string | null
-  - status: TaskStatus
-  - priority: TaskPriority
-  - dueDate: Date | null
+  - createdAt: Date
+  - updatedAt: Date
+
+Methodes :
+  - findOrCreateForUser(userId)
+  - getItems(cartId)
+
+--------------------------------------------------------------------------------
+5.4 OrderItem (Ligne de commande)
+--------------------------------------------------------------------------------
+Responsabilite : representer une commande d'un produit passee par un
+utilisateur.
+
+Attributs :
+  - id: UUID
+  - cartId: UUID
+  - productId: UUID
+  - numberOfPeople: number
+  - pickupDate: Date
+  - pickupTime: string
+  - status: OrderStatus (PENDING | READY | COLLECTED | CANCELLED)
   - createdAt: Date
   - updatedAt: Date
 
 Methodes :
   - create()
   - findById()
+  - findByCartId()
   - findByUserId()
   - update()
   - delete()
 
 --------------------------------------------------------------------------------
-5.3 AuthController
+5.5 AuthController
 --------------------------------------------------------------------------------
 Responsabilite : gerer l'inscription et la connexion.
 
@@ -326,31 +432,44 @@ Methodes :
   - logout(req, res)  [si une strategie de revocation est utilisee]
 
 --------------------------------------------------------------------------------
-5.4 TaskController
+5.6 ProductController
 --------------------------------------------------------------------------------
-Responsabilite : recevoir les requetes HTTP relatives aux taches.
+Responsabilite : recevoir les requetes HTTP relatives au catalogue.
 
 Methodes :
-  - listTasks(req, res)
-  - getTask(req, res)
-  - createTask(req, res)
-  - updateTask(req, res)
-  - deleteTask(req, res)
+  - listProducts(req, res)
+  - getProduct(req, res)
 
 --------------------------------------------------------------------------------
-5.5 TaskService
+5.7 OrderController
 --------------------------------------------------------------------------------
-Responsabilite : contenir les regles metier des taches.
+Responsabilite : recevoir les requetes HTTP relatives au panier et aux
+commandes.
 
 Methodes :
-  - validateTaskInput(data)
-  - createTask(userId, data)
-  - getUserTasks(userId, filters)
-  - updateTask(userId, taskId, data)
-  - deleteTask(userId, taskId)
+  - getCart(req, res)
+  - createOrderItem(req, res)
+  - updateOrderItem(req, res)
+  - deleteOrderItem(req, res)
+  - listOrderHistory(req, res)
 
 --------------------------------------------------------------------------------
-5.6 AuthMiddleware
+5.8 OrderService
+--------------------------------------------------------------------------------
+Responsabilite : contenir les regles metier des commandes.
+
+Methodes :
+  - validateOrderInput(data)
+  - ensureProductAvailable(productId)
+  - ensure48hDelay(pickupDate, pickupTime)
+  - createOrderItem(userId, data)
+  - getUserCart(userId)
+  - updateOrderItem(userId, orderItemId, data)
+  - deleteOrderItem(userId, orderItemId)
+  - getOrderHistory(userId)
+
+--------------------------------------------------------------------------------
+5.9 AuthMiddleware
 --------------------------------------------------------------------------------
 Responsabilite : verifier le jeton JWT transmis dans la requete.
 
@@ -358,21 +477,26 @@ Methode :
   - authenticate(req, res, next)
 
 --------------------------------------------------------------------------------
-5.7 Organisation du back-end
+5.10 Organisation du back-end
 --------------------------------------------------------------------------------
     src/
     |-- controllers/
     |   |-- auth.controller.ts
-    |   `-- task.controller.ts
+    |   |-- product.controller.ts
+    |   `-- order.controller.ts
     |-- services/
     |   |-- auth.service.ts
-    |   `-- task.service.ts
+    |   |-- product.service.ts
+    |   `-- order.service.ts
     |-- models/
     |   |-- user.model.ts
-    |   `-- task.model.ts
+    |   |-- product.model.ts
+    |   |-- cart.model.ts
+    |   `-- orderItem.model.ts
     |-- routes/
     |   |-- auth.routes.ts
-    |   `-- task.routes.ts
+    |   |-- product.routes.ts
+    |   `-- order.routes.ts
     |-- middleware/
     |   |-- auth.middleware.ts
     |   `-- error.middleware.ts
@@ -393,50 +517,90 @@ metier et l'acces aux donnees.
   Colonne          Type              Contraintes
   ---------------  ----------------  --------------------
   id               UUID              Cle primaire
-  name             VARCHAR(100)      Obligatoire
+  first_name       VARCHAR(100)      Obligatoire
+  last_name        VARCHAR(100)      Obligatoire
   email            VARCHAR(255)      Obligatoire, unique
   password_hash    TEXT              Obligatoire
+  role             VARCHAR(20)       Obligatoire, defaut 'CLIENT'
   created_at       TIMESTAMP         Obligatoire
   updated_at       TIMESTAMP         Obligatoire
 
 --------------------------------------------------------------------------------
-6.2 Table "tasks"
+6.2 Table "products"
+--------------------------------------------------------------------------------
+  Colonne          Type              Contraintes
+  ---------------  ----------------  --------------------
+  id               UUID              Cle primaire
+  name             VARCHAR(150)      Obligatoire
+  description      TEXT              Facultatif
+  price            NUMERIC(6,2)      Obligatoire
+  category         VARCHAR(30)       Obligatoire
+  available        BOOLEAN           Obligatoire, defaut true
+  image_url        TEXT              Facultatif
+  created_at       TIMESTAMP         Obligatoire
+  updated_at       TIMESTAMP         Obligatoire
+
+--------------------------------------------------------------------------------
+6.3 Table "carts"
 --------------------------------------------------------------------------------
   Colonne          Type              Contraintes
   ---------------  ----------------  ---------------------------
   id               UUID              Cle primaire
-  user_id          UUID              Cle etrangere vers users.id
-  title            VARCHAR(150)      Obligatoire
-  description      TEXT              Facultatif
-  status           VARCHAR(20)       Obligatoire
-  priority         VARCHAR(20)       Obligatoire
-  due_date         DATE              Facultatif
+  user_id          UUID              Cle etrangere vers users.id,
+                                     unique (un panier actif par
+                                     utilisateur)
   created_at       TIMESTAMP         Obligatoire
   updated_at       TIMESTAMP         Obligatoire
 
 --------------------------------------------------------------------------------
-6.3 Relation
+6.4 Table "order_items"
 --------------------------------------------------------------------------------
-  USERS (1) ------- owns -------< (0..N) TASKS
+  Colonne           Type              Contraintes
+  ----------------  ----------------  -----------------------------
+  id                UUID              Cle primaire
+  cart_id           UUID              Cle etrangere vers carts.id
+  product_id        UUID              Cle etrangere vers products.id
+  number_of_people  INTEGER           Obligatoire, > 0
+  pickup_date       DATE              Obligatoire
+  pickup_time       TIME              Obligatoire
+  status            VARCHAR(20)       Obligatoire, defaut 'PENDING'
+  created_at        TIMESTAMP         Obligatoire
+  updated_at        TIMESTAMP         Obligatoire
 
-Un utilisateur peut posseder zero, une ou plusieurs taches. Chaque tache
-appartient a un seul utilisateur.
+--------------------------------------------------------------------------------
+6.5 Relations
+--------------------------------------------------------------------------------
+  USERS (1) ------- owns -------< (0..1) CARTS
+  CARTS (1) ------- contains ----< (0..N) ORDER_ITEMS
+  PRODUCTS (1) ---- referenced by < (0..N) ORDER_ITEMS
+
+Un utilisateur possede au plus un panier actif. Un panier contient zero,
+une ou plusieurs lignes de commande. Chaque ligne de commande fait
+reference a un seul produit du catalogue.
 
 --------------------------------------------------------------------------------
-6.4 Valeurs autorisees
+6.6 Valeurs autorisees
 --------------------------------------------------------------------------------
-  status   : TODO | IN_PROGRESS | DONE
-  priority : LOW | MEDIUM | HIGH
+  role (users)      : CLIENT | ADMIN
+  category (products): VIENNOISERIE | PAIN | PATISSERIE |
+                        VENTE_ADDITIONNELLE
+  status (order_items): PENDING | READY | COLLECTED | CANCELLED
 
 --------------------------------------------------------------------------------
-6.5 Regles d'integrite
+6.7 Regles d'integrite
 --------------------------------------------------------------------------------
   - L'e-mail d'un utilisateur doit etre unique.
-  - Une tache ne peut pas etre creee sans utilisateur associe.
-  - Un utilisateur ne peut consulter que ses propres taches.
-  - La suppression d'un utilisateur entraine la suppression de ses taches
-    (regle ON DELETE CASCADE).
-  - Les champs status et priority doivent appartenir aux valeurs autorisees.
+  - Une ligne de commande ne peut reference qu'un produit disponible
+    (available = true) au moment de la creation.
+  - La date/heure de retrait (pickup_date + pickup_time) doit etre au
+    moins 48h posterieure a la date de creation de la ligne de commande.
+  - Un utilisateur ne peut consulter ou modifier que son propre panier et
+    ses propres commandes.
+  - La suppression d'un utilisateur entraine la suppression de son
+    panier et de ses lignes de commande, selon la regle
+    ON DELETE CASCADE.
+  - Les champs category et status doivent appartenir aux valeurs
+    autorisees.
 
 
 ================================================================================
@@ -454,35 +618,46 @@ appartient a un seul utilisateur.
   6. AuthService   -> AuthService : comparer le mot de passe
   7. AuthService   -> API         : generer un JWT
   8. API           -> Front-end   : 200 + token
-  9. Front-end     -> Utilisateur : afficher le tableau de bord
+  9. Front-end     -> Utilisateur : afficher l'espace client
 
 --------------------------------------------------------------------------------
-7.2 Recuperation des taches
+7.2 Consultation du catalogue
 --------------------------------------------------------------------------------
-  1. Utilisateur   -> Front-end     : ouvre le tableau de bord
-  2. Front-end     -> API           : GET /api/tasks avec JWT
-  3. API           -> AuthMiddleware: verifier le JWT
-  4. AuthMiddleware-> API           : userId authentifie
-  5. API           -> TaskService   : getUserTasks(userId, filters)
-  6. TaskService   -> PostgreSQL    : SELECT tasks WHERE user_id = userId
-  7. PostgreSQL    -> TaskService   : liste des taches
-  8. TaskService   -> API           : taches filtrees
-  9. API           -> Front-end     : 200 + JSON
- 10. Front-end     -> Utilisateur   : afficher les taches
+  1. Utilisateur   -> Front-end        : ouvre la page catalogue
+  2. Front-end     -> API              : GET /api/products?category=...
+  3. API           -> ProductService   : findByCategory(category)
+  4. ProductService-> PostgreSQL       : SELECT products WHERE
+                                         category = ... AND available =
+                                         true
+  5. PostgreSQL    -> ProductService   : liste des produits
+  6. ProductService-> API              : produits filtres
+  7. API           -> Front-end        : 200 + JSON
+  8. Front-end     -> Utilisateur      : afficher les produits par onglet
 
 --------------------------------------------------------------------------------
-7.3 Creation d'une tache
+7.3 Creation d'une commande (ajout au panier)
 --------------------------------------------------------------------------------
-  1. Utilisateur   -> Front-end     : remplit le formulaire
-  2. Front-end     -> API           : POST /api/tasks avec JSON et JWT
+  1. Utilisateur   -> Front-end     : remplit le formulaire de commande
+                                       (produit, nb personnes, date, heure)
+  2. Front-end     -> API           : POST /api/orders avec JSON et JWT
   3. API           -> AuthMiddleware: verifier le JWT
   4. AuthMiddleware-> API           : userId authentifie
-  5. API           -> TaskService   : valider et creer la tache
-  6. TaskService   -> PostgreSQL    : INSERT INTO tasks
-  7. PostgreSQL    -> TaskService   : tache creee
-  8. TaskService   -> API           : objet tache
-  9. API           -> Front-end     : 201 + JSON
- 10. Front-end     -> Utilisateur   : afficher un message de succes
+  5. API           -> OrderService  : valider le produit et le delai de
+                                       48h
+  6. OrderService  -> PostgreSQL    : verifier la disponibilite du
+                                       produit
+  7. OrderService  -> PostgreSQL    : creer ou recuperer le panier de
+                                       l'utilisateur
+  8. OrderService  -> PostgreSQL    : INSERT INTO order_items
+  9. PostgreSQL    -> OrderService  : ligne de commande creee
+ 10. OrderService  -> API           : objet commande
+ 11. API           -> Front-end     : 201 + JSON
+ 12. Front-end     -> Utilisateur   : afficher un message de succes et
+                                       mettre a jour le panier
+
+Si le delai de 48h n'est pas respecte ou si le produit n'est pas
+disponible, l'API retourne une erreur 400 et aucune ecriture n'est
+effectuee.
 
 
 ================================================================================
@@ -494,15 +669,16 @@ appartient a un seul utilisateur.
 --------------------------------------------------------------------------------
   API                                Utilisation                Justification
   ---------------------------------  -------------------------  --------------------------------
-  Service d'e-mail (ex. SendGrid)    Reinitialisation du mot     Evite de maintenir un serveur
-                                     de passe, e-mails systeme   SMTP interne
+  Service d'e-mail (ex. SendGrid)    Confirmation de commande,   Evite de maintenir un serveur
+                                     reinitialisation du mot     SMTP interne
+                                     de passe
   Service de journalisation          Suivi des erreurs en        Facilite le diagnostic des
   (ex. Sentry)                       production                  incidents
   Service d'hebergement              Hebergement de l'API et     Permet un deploiement evolutif
   (ex. Render, AWS)                  de la base de donnees
-
-Dans le MVP, les services d'e-mail et de journalisation peuvent etre
-integres progressivement. Aucune API metier externe n'est obligatoire.
+  Service de paiement                Paiement en ligne           Hors perimetre du MVP (US-10),
+  (ex. Stripe) - hors MVP            (extension future)          a integrer lors d'une version
+                                                                  ulterieure
 
 --------------------------------------------------------------------------------
 8.2 Format general des reponses
@@ -517,7 +693,8 @@ integres progressivement. Aucune API metier externe n'est obligatoire.
     {
       "error": {
         "code": "VALIDATION_ERROR",
-        "message": "The title is required",
+        "message": "La commande doit etre passee au moins 48h avant le
+        retrait",
         "details": []
       }
     }
@@ -525,11 +702,12 @@ integres progressivement. Aucune API metier externe n'est obligatoire.
 --------------------------------------------------------------------------------
 8.3 Endpoints d'authentification
 --------------------------------------------------------------------------------
-  Methode  URL                    Entree                       Sortie
-  -------  ---------------------  ---------------------------  ------------------------
-  POST     /api/auth/register     JSON: name, email, password  Utilisateur cree + token
-  POST     /api/auth/login        JSON: email, password        Token JWT + utilisateur
-  GET      /api/auth/me           Header Authorization: Bearer Utilisateur connecte
+  Methode  URL                    Entree                                Sortie
+  -------  ---------------------  ------------------------------------  ------------------------
+  POST     /api/auth/register     JSON: firstName, lastName, email,     Utilisateur cree + token
+                                  password
+  POST     /api/auth/login        JSON: email, password                 Token JWT + utilisateur
+  GET      /api/auth/me           Header Authorization: Bearer          Utilisateur connecte
 
   Exemple - inscription :
 
@@ -537,7 +715,8 @@ integres progressivement. Aucune API metier externe n'est obligatoire.
     Content-Type: application/json
 
     {
-      "name": "Alice Martin",
+      "firstName": "Alice",
+      "lastName": "Martin",
       "email": "alice@example.com",
       "password": "MotDePasseSecurise123!"
     }
@@ -548,7 +727,8 @@ integres progressivement. Aucune API metier externe n'est obligatoire.
       "data": {
         "user": {
           "id": "8f7c0e1e-1b8d-4bd1-8f82-123456789abc",
-          "name": "Alice Martin",
+          "firstName": "Alice",
+          "lastName": "Martin",
           "email": "alice@example.com"
         },
         "token": "jwt-token"
@@ -557,29 +737,36 @@ integres progressivement. Aucune API metier externe n'est obligatoire.
     }
 
 --------------------------------------------------------------------------------
-8.4 Endpoints de gestion des taches
+8.4 Endpoints du catalogue de produits
 --------------------------------------------------------------------------------
-  Methode  URL              Entree                                    Sortie
-  -------  ---------------  ----------------------------------------  ---------------------
-  GET      /api/tasks       Query params: status, priority, search    Liste des taches
-  GET      /api/tasks/:id   Identifiant dans l'URL                    Tache detaillee
-  POST     /api/tasks       JSON: title, description, status,         Tache creee
-                            priority, dueDate
-  PATCH    /api/tasks/:id   JSON avec les champs a modifier           Tache modifiee
-  DELETE   /api/tasks/:id   Identifiant dans l'URL                    Confirmation
+  Methode  URL                  Entree                              Sortie
+  -------  -------------------  ----------------------------------  ---------------------
+  GET      /api/products        Query params facultatifs: category  Liste des produits
+  GET      /api/products/:id    Identifiant dans l'URL               Produit detaille
 
-  Exemple - creation d'une tache :
+--------------------------------------------------------------------------------
+8.5 Endpoints du panier et des commandes
+--------------------------------------------------------------------------------
+  Methode  URL                    Entree                                 Sortie
+  -------  ---------------------  -------------------------------------  ---------------------
+  GET      /api/cart              Header Authorization: Bearer            Panier de l'utilisateur
+  POST     /api/orders            JSON: productId, numberOfPeople,        Ligne de commande creee
+                                  pickupDate, pickupTime
+  PATCH    /api/orders/:id        JSON avec les champs a modifier         Ligne de commande modifiee
+  DELETE   /api/orders/:id        Identifiant dans l'URL                  Confirmation de suppression
+  GET      /api/orders/history    Query params facultatifs: search        Historique des commandes
 
-    POST /api/tasks
+  Exemple - creation d'une commande :
+
+    POST /api/orders
     Authorization: Bearer jwt-token
     Content-Type: application/json
 
     {
-      "title": "Preparer la presentation",
-      "description": "Finaliser les diapositives.",
-      "priority": "HIGH",
-      "status": "TODO",
-      "dueDate": "2026-09-15"
+      "productId": "c1a2b3c4-1111-4c75-8e2e-123456789abc",
+      "numberOfPeople": 4,
+      "pickupDate": "2026-09-15",
+      "pickupTime": "08:00"
     }
 
   Reponse :
@@ -587,25 +774,25 @@ integres progressivement. Aucune API metier externe n'est obligatoire.
     {
       "data": {
         "id": "a3c5f5a3-0a19-4c75-8e2e-123456789abc",
-        "title": "Preparer la presentation",
-        "description": "Finaliser les diapositives.",
-        "priority": "HIGH",
-        "status": "TODO",
-        "dueDate": "2026-09-15"
+        "productId": "c1a2b3c4-1111-4c75-8e2e-123456789abc",
+        "numberOfPeople": 4,
+        "pickupDate": "2026-09-15",
+        "pickupTime": "08:00",
+        "status": "PENDING"
       },
-      "message": "Task created successfully"
+      "message": "Order created successfully"
     }
 
 --------------------------------------------------------------------------------
-8.5 Codes HTTP
+8.6 Codes HTTP
 --------------------------------------------------------------------------------
   200  Requete reussie
   201  Ressource creee
-  400  Donnees invalides
+  400  Donnees invalides ou delai de 48h non respecte
   401  Authentification necessaire ou invalide
   403  Acces interdit
   404  Ressource inexistante
-  409  Conflit (ex. e-mail deja utilise)
+  409  Conflit, par exemple e-mail deja utilise
   500  Erreur interne du serveur
 
 
@@ -625,8 +812,8 @@ l'hebergement du code, les Pull Requests et les pipelines CI/CD.
     main
     `-- development
         |-- feature/authentication
-        |-- feature/task-management
-        |-- feature/task-filters
+        |-- feature/catalog
+        |-- feature/cart-and-orders
         `-- fix/validation-error
 
   Branche       Utilisation
@@ -641,7 +828,7 @@ l'hebergement du code, les Pull Requests et les pipelines CI/CD.
 9.3 Regles de contribution
 --------------------------------------------------------------------------------
   - Un commit doit representer une modification coherente.
-  - Les messages de commit suivent une convention (ex: "feat: add task
+  - Les messages de commit suivent une convention (ex: "feat: add order
     creation").
   - Aucun developpement direct n'est effectue sur main.
   - Toute modification passe par une Pull Request.
@@ -691,12 +878,13 @@ Le MVP doit au minimum tester :
   - Le rejet d'une adresse e-mail deja utilisee.
   - La connexion avec un mot de passe incorrect.
   - L'acces interdit a une route sans JWT.
-  - La creation d'une tache.
-  - La validation d'un titre vide.
-  - La recuperation des taches d'un utilisateur.
-  - L'impossibilite de consulter la tache d'un autre utilisateur.
-  - La modification d'une tache.
-  - La suppression d'une tache.
+  - L'affichage du catalogue filtre par categorie.
+  - La creation d'une commande avec un delai de 48h respecte.
+  - Le rejet d'une commande avec un delai inferieur a 48h.
+  - Le rejet d'une commande sur un produit indisponible.
+  - La modification et la suppression d'une commande dans le delai
+    autorise.
+  - L'impossibilite de consulter le panier d'un autre utilisateur.
 
 --------------------------------------------------------------------------------
 10.3 Pipeline QA et deploiement
@@ -727,15 +915,15 @@ Le MVP doit au minimum tester :
   Developpement :
     - Utilise par les developpeurs.
     - Base de donnees locale ou de test.
-    - Donnees fictives.
+    - Catalogue de produits fictif.
 
   Staging :
     - Version proche de la production.
     - Tests d'integration et end-to-end.
-    - Validation par les responsables du projet.
+    - Validation par les responsables de la boulangerie.
 
   Production :
-    - Accessible aux utilisateurs finaux.
+    - Accessible aux clients de la boulangerie.
     - Sauvegardes activees.
     - Journalisation et surveillance des erreurs.
 
@@ -745,25 +933,28 @@ Le MVP doit au minimum tester :
 ================================================================================
 
   React et TypeScript
-    React convient a une interface composee de plusieurs ecrans et
-    composants reutilisables. TypeScript permet de detecter certaines
-    erreurs avant l'execution et ameliore la lisibilite du code.
+    React convient a une interface composee de plusieurs ecrans
+    (catalogue par onglets, panier, espace client) et de composants
+    reutilisables (fiche produit, ligne de commande). TypeScript permet
+    de detecter certaines erreurs avant l'execution.
 
   Node.js et Express
     Node.js permet d'utiliser JavaScript ou TypeScript cote serveur et
     cote client. Express fournit une structure simple pour creer une API
-    REST, gerer les routes et ajouter des middlewares.
+    REST, gerer les routes et centraliser la regle metier des 48h dans
+    un middleware ou un service dedie.
 
   PostgreSQL
-    PostgreSQL est adapte aux donnees structurees du projet. Les relations
-    entre utilisateurs et taches sont clairement modelisees par des cles
-    etrangeres et des contraintes d'integrite.
+    PostgreSQL est adapte aux donnees structurees du projet. Les
+    relations entre utilisateurs, panier, commandes et produits sont
+    clairement modelisees par des cles etrangeres et des contraintes
+    d'integrite.
 
   JWT
-    JWT permet a l'API d'identifier un utilisateur lors de requetes
+    JWT permet a l'API d'identifier un client lors de requetes
     successives sans conserver necessairement une session serveur
-    classique. Les mots de passe doivent etre haches et ne doivent jamais
-    etre stockes en clair.
+    classique. Les mots de passe doivent etre haches et ne doivent
+    jamais etre stockes en clair.
 
   Docker
     Docker garantit que l'application s'execute dans des environnements
@@ -772,12 +963,15 @@ Le MVP doit au minimum tester :
 
   Tests automatises
     Les tests unitaires et d'integration detectent rapidement les
-    regressions. Les tests end-to-end verifient que les principaux
-    parcours fonctionnent comme prevu.
+    regressions, en particulier sur la regle critique du delai de 48h.
+    Les tests end-to-end verifient que les principaux parcours (creation
+    de compte, consultation du catalogue, commande) fonctionnent comme
+    prevu.
 
   Architecture en couches
     La separation entre controleurs, services, modeles et middleware
-    facilite la maintenance, les tests et l'evolution future du systeme.
+    facilite la maintenance, les tests et l'evolution future du systeme,
+    notamment l'ajout futur du paiement en ligne (US-10).
 
 
 ================================================================================
@@ -789,9 +983,11 @@ Le MVP doit au minimum tester :
 --------------------------------------------------------------------------------
   - Utilisation obligatoire de HTTPS.
   - Hachage des mots de passe avec un algorithme adapte.
-  - Validation des donnees entrantes.
-  - Protection des routes privees par JWT.
-  - Verification de la propriete des taches.
+  - Validation des donnees entrantes, notamment la coherence des
+    dates/heures de retrait.
+  - Protection des routes privees (panier, commandes, espace client) par
+    JWT.
+  - Verification de la propriete du panier et des commandes.
   - Limitation du nombre de requetes sur les endpoints sensibles.
   - Stockage des secrets dans des variables d'environnement.
   - Protection contre les injections SQL grace aux requetes parametrees.
@@ -800,28 +996,32 @@ Le MVP doit au minimum tester :
 --------------------------------------------------------------------------------
 12.2 Evolutions possibles
 --------------------------------------------------------------------------------
-  - Ajout d'un cache Redis.
-  - Pagination des taches.
-  - Index sur user_id, status et priority.
-  - Separation du front-end et du back-end en services independants.
-  - Ajout d'une file de messages pour les notifications.
-  - Mise en place de plusieurs instances de l'API derriere un
-    repartiteur de charge.
+  - Integration d'un moyen de paiement en ligne (US-10).
+  - Ajout d'une application mobile (US-11).
+  - Ajout de notifications en temps reel sur l'etat des commandes
+    (US-12).
+  - Pagination et recherche avancee dans le catalogue.
+  - Index sur user_id, category et pickup_date.
+  - Gestion des stocks et de la disponibilite en temps reel des produits.
+  - Interface d'administration pour la gestion du catalogue et des
+    commandes.
 
 
 ================================================================================
 13. CONCLUSION DU LIVRABLE
 ================================================================================
 
-Cette documentation presente une conception technique complete pour un MVP
-de gestion de taches. Elle comprend les User Stories priorisees, les
-maquettes principales, l'architecture, les composants logiciels, le schema
-de base de donnees, les diagrammes de sequence, les specifications API
-ainsi que les strategies SCM et QA.
+Cette documentation presente une conception technique complete pour le
+MVP du site web "O2 Passions". Elle comprend les User Stories priorisees,
+les maquettes principales (catalogue, panier, espace client),
+l'architecture, les composants logiciels, le schema de base de donnees,
+les diagrammes de sequence, les specifications API ainsi que les
+strategies SCM et QA.
 
-Les elements qui doivent etre adaptes au projet reel sont notamment le
-domaine metier, les types d'utilisateurs, les fonctionnalites du MVP, les
-APIs externes et les choix technologiques.
+Les elements a valider ou adapter avec la boulangerie sont notamment
+l'organisation exacte du catalogue par categories, la gestion des
+horaires de retrait, le choix final des technologies et le calendrier
+d'integration du paiement en ligne (US-10).
 
 ================================================================================
                                 FIN DU DOCUMENT
