@@ -771,5 +771,3 @@ main
 - Application mobile ou PWA pour une expérience mobile améliorée.
 
 ---
-
-Cette documentation constitue un socle technique complet pour le site O2Passions. Elle peut être adaptée en fonction des contraintes réelles (budget, équipe, délais, outils existants) tout en conservant la même structure : User Stories, maquettes, architecture, modèle de données, APIs, SCM/QA et justifications techniques.
