@@ -361,8 +361,8 @@ Le MVP inclut une interface client (site public) et une interface administrateur
 
 | Couche | Technologie | Rôle |
 |---|---|---|
-| Front-end client | HTML5 + CSS3 + JavaScript (vanilla) | Site public : pages statiques, appels `fetch()` vers l'API. |
-| Front-end admin | HTML5 + CSS3 + JavaScript (vanilla) | Back-office pour gérants, mêmes technologies que le site public. |
+| Front-end client | HTML5 + CSS3 + JavaScript | Site public : pages statiques, appels `fetch()` vers l'API. |
+| Front-end admin | HTML5 + CSS3 + JavaScript | Back-office pour gérants, mêmes technologies que le site public. |
 | Back-end API | Python avec Flask | API REST, logique métier, validation des données. |
 | Base de données | SQLite (module `sqlite3` de Python) | Stockage des produits, commandes, utilisateurs dans un fichier `.db`. |
 | Authentification | JWT (ex. `PyJWT`) ou sessions Flask | Gestion des connexions clients et admin. |
