@@ -1,8 +1,10 @@
-# Documentation technique — Site web Ô2Passions
+# Documentation technique — Site web O2Passions (boulangerie-pâtisserie)
 
-**Projet :** Ô2Passions — Site web d'une boulangerie-pâtisserie permettant de présenter les produits, informer sur les horaires et la localisation, et passer des commandes en ligne (retrait en boutique).
+**Projet :** O2Passions — Site web d'une boulangerie-pâtisserie permettant de présenter les produits, informer sur les horaires et la localisation, et passer des commandes en ligne (retrait en boutique ou livraison locale).
 
 **Objectif du MVP :** Offrir une vitrine numérique claire et permettre la prise de commande simple, tout en restant facile à maintenir et à faire évoluer.
+
+**Stack technique de cette version :** HTML / CSS / JavaScript (front-end), Python avec Flask (back-end), SQLite (base de données).
 
 ## Sommaire
 
@@ -359,14 +361,14 @@ Le MVP inclut une interface client (site public) et une interface administrateur
 
 | Couche | Technologie | Rôle |
 |---|---|---|
-| Front-end client | Next.js (React) + TypeScript | Site public, SEO, rendu serveur. |
-| Front-end admin | Next.js ou React + TypeScript | Back-office pour gérants. |
-| Back-end API | Node.js avec NestJS ou Express + TypeScript | API REST, logique métier. |
-| Base de données | PostgreSQL | Stockage des produits, commandes, utilisateurs. |
-| Authentification | JWT (ou sessions serveur) | Gestion des connexions clients et admin. |
-| Paiement | Stripe (ou équivalent) | Paiement par carte bancaire. |
-| Hébergement | Vercel / Netlify (front) + Render / AWS / Railway (API & DB) | Déploiement et scalabilité. |
-| Tests | Jest, React Testing Library, Supertest, Playwright | Tests unitaires, intégration, end-to-end. |
+| Front-end client | HTML5 + CSS3 + JavaScript (vanilla) | Site public : pages statiques, appels `fetch()` vers l'API. |
+| Front-end admin | HTML5 + CSS3 + JavaScript (vanilla) | Back-office pour gérants, mêmes technologies que le site public. |
+| Back-end API | Python avec Flask | API REST, logique métier, validation des données. |
+| Base de données | SQLite (module `sqlite3` de Python) | Stockage des produits, commandes, utilisateurs dans un fichier `.db`. |
+| Authentification | JWT (ex. `PyJWT`) ou sessions Flask | Gestion des connexions clients et admin. |
+| Paiement | Stripe (bibliothèque `stripe` pour Python) | Paiement par carte bancaire. |
+| Hébergement | Fichiers statiques servis par Flask (ou Nginx) + Render / PythonAnywhere / Railway pour l'API | Déploiement simple, adapté à un commerce local. |
+| Tests | `pytest` (back-end), `Jest` (fonctions JS), Playwright | Tests unitaires, intégration, end-to-end. |
 | CI/CD | GitHub Actions | Build, tests, déploiement automatique. |
 
 ### 4.2 Diagramme d'architecture de haut niveau
@@ -375,145 +377,218 @@ Le MVP inclut une interface client (site public) et une interface administrateur
 
 ### 4.3 Flux de données principaux
 
-1. Le client navigue sur le site Next.js.
-2. Le front-end appelle l'API pour :
+1. Le client navigue sur les pages HTML/CSS/JS statiques.
+2. Le JavaScript du front-end appelle l'API via `fetch()` pour :
    - Récupérer les produits et catégories.
    - Créer / mettre à jour le panier.
    - Passer une commande.
-3. L'API vérifie l'authentification (JWT).
-4. L'API interagit avec PostgreSQL pour lire/écrire les données.
+3. L'API Flask vérifie l'authentification (JWT).
+4. L'API interagit avec la base SQLite pour lire/écrire les données.
 5. Pour le paiement, l'API communique avec Stripe.
-6. Le back-office appelle les mêmes endpoints API avec des droits admin.
+6. Le back-office (mêmes technologies HTML/CSS/JS) appelle les mêmes endpoints API avec des droits admin.
+
+> **Note sur SQLite :** SQLite est un moteur de base de données embarqué dans un simple fichier, sans serveur dédié. Il est bien adapté à un MVP à trafic modéré (une boutique locale). Le support des clés étrangères doit être activé explicitement (`PRAGMA foreign_keys = ON`) et, en cas de forte croissance du trafic ou de besoin d'accès concurrents en écriture plus intensifs, une migration vers PostgreSQL ou MySQL pourra être envisagée (cf. section 11 — Évolutions possibles).
 
 ---
 
 ## 5. Composants, classes et conception de la base de données
 
-### 5.1 Principaux composants front-end (client)
+### 5.1 Principales pages et scripts front-end (client)
 
-- `Layout` : structure commune (header, footer).
-- `Navbar` : navigation, liens, icônes panier/compte.
-- `HomePage` : page d'accueil avec sections.
-- `CategoryPage` : liste des produits d'une catégorie.
-- `ProductCard` : carte produit (image, nom, prix, bouton).
-- `ProductDetailPage` : détail d'un produit.
-- `CartPage` : affichage et gestion du panier.
-- `CheckoutPage` : formulaire de commande et paiement.
-- `AccountPage` : profil et historique des commandes.
-- `LoginForm` / `RegisterForm` : authentification.
-- `OrderList` / `OrderDetail` : historique et détail des commandes.
+Pages HTML (statiques, servies telles quelles) :
 
-### 5.2 Principaux composants back-office
+- `index.html` : page d'accueil (bannière, catégories, produits phares, horaires).
+- `categorie.html` : liste des produits d'une catégorie (avec filtres).
+- `produit.html` : détail d'un produit.
+- `panier.html` : affichage et gestion du panier.
+- `checkout.html` : formulaire de commande et paiement.
+- `compte.html` : profil et historique des commandes.
+- `connexion.html` / `inscription.html` : authentification.
 
-- `AdminLayout` : structure admin (menu latéral, header).
-- `ProductList` / `ProductForm` : gestion des produits.
-- `OrderList` / `OrderDetail` : gestion des commandes.
-- `SettingsPage` : horaires, infos boutique, etc.
+Scripts JavaScript (un fichier par responsabilité, importés dans les pages concernées) :
 
-### 5.3 Classes / services back-end
+- `js/api.js` : centralise les appels `fetch()` vers l'API (URL de base, gestion du token JWT, gestion des erreurs).
+- `js/auth.js` : logique des formulaires de connexion / inscription.
+- `js/products.js` : chargement et affichage des produits et catégories.
+- `js/cart.js` : gestion du panier (ajout, modification, suppression, persistance en `localStorage` avant commande).
+- `js/checkout.js` : récapitulatif de commande et intégration du paiement Stripe (Stripe.js).
+- `js/account.js` : affichage du profil et de l'historique des commandes.
+- `css/style.css` : feuille de style commune (mise en page responsive, variables CSS pour les couleurs et typographies).
 
-**User**
-- Attributs : `id`, `email`, `passwordHash`, `firstName`, `lastName`, `phone`, `role`, `createdAt`, `updatedAt`.
-- Méthodes : `createUser()`, `findByEmail()`, `verifyPassword()`, `generateToken()`.
+### 5.2 Principales pages et scripts du back-office
 
-**Product**
-- Attributs : `id`, `name`, `slug`, `description`, `price`, `categoryId`, `imageUrl`, `isAvailable`, `createdAt`, `updatedAt`.
-- Méthodes : `create()`, `findAll()`, `findById()`, `update()`, `delete()`, `findByCategory()`.
+- `admin/index.html` : tableau de bord admin.
+- `admin/produits.html` : liste et formulaire de gestion des produits.
+- `admin/commandes.html` : liste et détail des commandes.
+- `admin/parametres.html` : horaires, informations de la boutique.
+- `admin/js/admin-products.js` : appels API et interactions pour la gestion des produits.
+- `admin/js/admin-orders.js` : appels API et interactions pour la gestion des commandes.
 
-**Category**
-- Attributs : `id`, `name`, `slug`, `order`.
-- Méthodes : `create()`, `findAll()`, `findById()`.
+### 5.3 Modules et classes back-end (Python / Flask)
 
-**Order**
-- Attributs : `id`, `userId`, `status`, `receptionMode`, `scheduledDate`, `scheduledTimeSlot`, `deliveryAddress`, `totalAmount`, `paymentStatus`, `createdAt`, `updatedAt`.
-- Méthodes : `create()`, `findById()`, `findByUserId()`, `findAllForAdmin()`, `updateStatus()`, `cancel()`.
+**Modèles (`models/`)**
 
-**OrderItem**
-- Attributs : `id`, `orderId`, `productId`, `quantity`, `unitPrice`, `totalPrice`.
-- Méthodes : `create()`, `findByOrderId()`.
+**User** (`models/user.py`)
+- Attributs : `id`, `email`, `password_hash`, `first_name`, `last_name`, `phone`, `role`, `created_at`, `updated_at`.
+- Méthodes : `create_user()`, `find_by_email()`, `verify_password()`, `generate_token()`.
 
-**AuthService**
-- Méthodes : `register()`, `login()`, `validateToken()`, `refreshToken()` (optionnel).
+**Product** (`models/product.py`)
+- Attributs : `id`, `name`, `slug`, `description`, `price`, `category_id`, `image_url`, `is_available`, `created_at`, `updated_at`.
+- Méthodes : `create()`, `find_all()`, `find_by_id()`, `update()`, `delete()`, `find_by_category()`.
 
-**ProductService**
-- Méthodes : `listProducts(filters)`, `getProduct(id)`, `createProduct(data)`, `updateProduct(id, data)`, `toggleAvailability(id)`.
+**Category** (`models/category.py`)
+- Attributs : `id`, `name`, `slug`, `sort_order`.
+- Méthodes : `create()`, `find_all()`, `find_by_id()`.
 
-**OrderService**
-- Méthodes : `createOrder(userId, data)`, `getOrder(id)`, `getUserOrders(userId)`, `updateOrderStatus(orderId, status)`, `cancelOrder(orderId, reason)`.
+**Order** (`models/order.py`)
+- Attributs : `id`, `user_id`, `status`, `reception_mode`, `scheduled_date`, `scheduled_time_slot`, `delivery_address`, `total_amount`, `payment_status`, `created_at`, `updated_at`.
+- Méthodes : `create()`, `find_by_id()`, `find_by_user_id()`, `find_all_for_admin()`, `update_status()`, `cancel()`.
 
-**PaymentService**
-- Méthodes : `createPaymentIntent(amount, currency)`, `confirmPayment(paymentIntentId)`, `handleWebhook(event)`.
+**OrderItem** (`models/order_item.py`)
+- Attributs : `id`, `order_id`, `product_id`, `quantity`, `unit_price`, `total_price`.
+- Méthodes : `create()`, `find_by_order_id()`.
+
+**Services (`services/`) — logique métier**
+
+**auth_service.py**
+- Fonctions : `register()`, `login()`, `validate_token()`, `refresh_token()` (optionnel).
+
+**product_service.py**
+- Fonctions : `list_products(filters)`, `get_product(id)`, `create_product(data)`, `update_product(id, data)`, `toggle_availability(id)`.
+
+**order_service.py**
+- Fonctions : `create_order(user_id, data)`, `get_order(id)`, `get_user_orders(user_id)`, `update_order_status(order_id, status)`, `cancel_order(order_id, reason)`.
+
+**payment_service.py**
+- Fonctions : `create_payment_intent(amount, currency)`, `confirm_payment(payment_intent_id)`, `handle_webhook(event)` (intégration de la bibliothèque `stripe`).
+
+### 5.4 Organisation du projet (proposition)
+
+```text
+o2passions/
+|-- backend/
+|   |-- app.py                  # point d'entree Flask, enregistrement des blueprints
+|   |-- database.py             # connexion SQLite, initialisation du schema
+|   |-- models/
+|   |   |-- user.py
+|   |   |-- product.py
+|   |   |-- category.py
+|   |   |-- order.py
+|   |   `-- order_item.py
+|   |-- services/
+|   |   |-- auth_service.py
+|   |   |-- product_service.py
+|   |   |-- order_service.py
+|   |   `-- payment_service.py
+|   |-- routes/
+|   |   |-- auth_routes.py      # blueprint /api/auth
+|   |   |-- product_routes.py   # blueprint /api/products, /api/categories
+|   |   |-- order_routes.py     # blueprint /api/orders, /api/cart
+|   |   `-- admin_routes.py     # blueprint /api/admin
+|   |-- schema.sql              # script de creation des tables SQLite
+|   `-- tests/
+|       |-- test_auth.py
+|       |-- test_products.py
+|       `-- test_orders.py
+`-- frontend/
+    |-- index.html
+    |-- categorie.html
+    |-- produit.html
+    |-- panier.html
+    |-- checkout.html
+    |-- compte.html
+    |-- connexion.html
+    |-- inscription.html
+    |-- admin/
+    |   |-- index.html
+    |   |-- produits.html
+    |   |-- commandes.html
+    |   `-- js/
+    |       |-- admin-products.js
+    |       `-- admin-orders.js
+    |-- css/
+    |   `-- style.css
+    `-- js/
+        |-- api.js
+        |-- auth.js
+        |-- products.js
+        |-- cart.js
+        |-- checkout.js
+        `-- account.js
+```
 
 ---
 
 ## 6. Conception de la base de données
 
-### 6.1 Schéma relationnel (ER)
+### 6.1 Schéma relationnel (SQLite)
+
+> SQLite est dynamiquement typé : les types déclarés ci-dessous sont des conventions respectées par le schéma (`schema.sql`), mais SQLite n'impose pas de longueur maximale sur `TEXT`. Les identifiants sont générés côté application (ex. `uuid4()` en Python) et stockés en `TEXT`. Les booléens sont stockés en `INTEGER` (0 = faux, 1 = vrai). Les dates sont stockées en `TEXT` au format ISO 8601 (ex. `2026-09-15`). Le support des clés étrangères doit être activé avec `PRAGMA foreign_keys = ON;` à chaque connexion.
 
 **Table `users`**
 
 | Colonne | Type | Contraintes |
 |---|---|---|
-| id | UUID | PK |
-| email | VARCHAR(255) | Unique, obligatoire |
+| id | TEXT | PK (UUID) |
+| email | TEXT | Unique, obligatoire |
 | password_hash | TEXT | Obligatoire |
-| first_name | VARCHAR(100) | Obligatoire |
-| last_name | VARCHAR(100) | Obligatoire |
-| phone | VARCHAR(20) | Facultatif |
-| role | VARCHAR(20) | CUSTOMER, ADMIN |
-| created_at | TIMESTAMP | Obligatoire |
-| updated_at | TIMESTAMP | Obligatoire |
+| first_name | TEXT | Obligatoire |
+| last_name | TEXT | Obligatoire |
+| phone | TEXT | Facultatif |
+| role | TEXT | CUSTOMER, ADMIN |
+| created_at | TEXT | Obligatoire (ISO 8601) |
+| updated_at | TEXT | Obligatoire (ISO 8601) |
 
 **Table `categories`**
 
 | Colonne | Type | Contraintes |
 |---|---|---|
-| id | UUID | PK |
-| name | VARCHAR(100) | Obligatoire |
-| slug | VARCHAR(100) | Unique |
-| order | INTEGER | Facultatif (ordre d'affichage) |
+| id | TEXT | PK (UUID) |
+| name | TEXT | Obligatoire |
+| slug | TEXT | Unique |
+| sort_order | INTEGER | Facultatif (ordre d'affichage) |
 
 **Table `products`**
 
 | Colonne | Type | Contraintes |
 |---|---|---|
-| id | UUID | PK |
-| name | VARCHAR(150) | Obligatoire |
-| slug | VARCHAR(150) | Unique |
+| id | TEXT | PK (UUID) |
+| name | TEXT | Obligatoire |
+| slug | TEXT | Unique |
 | description | TEXT | Facultatif |
-| price | NUMERIC(10,2) | Obligatoire |
-| category_id | UUID | FK → categories.id |
+| price | REAL | Obligatoire |
+| category_id | TEXT | FK → categories.id |
 | image_url | TEXT | Facultatif |
-| is_available | BOOLEAN | Défaut true |
-| created_at | TIMESTAMP | Obligatoire |
-| updated_at | TIMESTAMP | Obligatoire |
+| is_available | INTEGER | Défaut 1 (0 = indisponible) |
+| created_at | TEXT | Obligatoire (ISO 8601) |
+| updated_at | TEXT | Obligatoire (ISO 8601) |
 
 **Table `orders`**
 
 | Colonne | Type | Contraintes |
 |---|---|---|
-| id | UUID | PK |
-| user_id | UUID | FK → users.id |
-| status | VARCHAR(30) | Obligatoire |
-| reception_mode | VARCHAR(20) | PICKUP, DELIVERY |
-| scheduled_date | DATE | Obligatoire |
-| scheduled_time_slot | VARCHAR(50) | Obligatoire |
+| id | TEXT | PK (UUID) |
+| user_id | TEXT | FK → users.id |
+| status | TEXT | Obligatoire |
+| reception_mode | TEXT | PICKUP, DELIVERY |
+| scheduled_date | TEXT | Obligatoire (date ISO 8601) |
+| scheduled_time_slot | TEXT | Obligatoire |
 | delivery_address | TEXT | Obligatoire si livraison |
-| total_amount | NUMERIC(10,2) | Obligatoire |
-| payment_status | VARCHAR(30) | PENDING, PAID, FAILED, REFUNDED |
-| created_at | TIMESTAMP | Obligatoire |
-| updated_at | TIMESTAMP | Obligatoire |
+| total_amount | REAL | Obligatoire |
+| payment_status | TEXT | PENDING, PAID, FAILED, REFUNDED |
+| created_at | TEXT | Obligatoire (ISO 8601) |
+| updated_at | TEXT | Obligatoire (ISO 8601) |
 
 **Table `order_items`**
 
 | Colonne | Type | Contraintes |
 |---|---|---|
-| id | UUID | PK |
-| order_id | UUID | FK → orders.id |
-| product_id | UUID | FK → products.id |
+| id | TEXT | PK (UUID) |
+| order_id | TEXT | FK → orders.id |
+| product_id | TEXT | FK → products.id |
 | quantity | INTEGER | Obligatoire, > 0 |
-| unit_price | NUMERIC(10,2) | Obligatoire |
-| total_price | NUMERIC(10,2) | Obligatoire |
+| unit_price | REAL | Obligatoire |
+| total_price | REAL | Obligatoire |
 
 ### 6.2 Diagramme entité-association
 
@@ -526,6 +601,7 @@ Le MVP inclut une interface client (site public) et une interface administrateur
 - Les lignes de commande (`order_items`) référencent une commande et un produit existants.
 - Le prix et la quantité sont toujours positifs.
 - La suppression d'un produit n'efface pas les lignes de commande historiques (pas de `ON DELETE CASCADE` sur `products` → `order_items`, ou utilisation de soft delete).
+- Le contrôle des clés étrangères doit être activé à chaque ouverture de connexion SQLite (`PRAGMA foreign_keys = ON;`), sans quoi SQLite ne les fait pas respecter par défaut.
 
 ---
 
@@ -602,7 +678,7 @@ Codes HTTP principaux : `200`, `201`, `400`, `401`, `403`, `404`, `409`, `500`.
 | GET | `/api/products` | Query params : `categoryId?`, `search?`, `available?` | Liste des produits |
 | GET | `/api/products/:slug` | — | Détail d'un produit |
 
-**Panier** (si géré côté serveur — peut aussi être géré côté client via `localStorage` / état React, sans endpoints dédiés)
+**Panier** (si géré côté serveur — peut aussi être géré côté client en JavaScript via `localStorage`, sans endpoints dédiés)
 
 | Méthode | URL |
 |---|---|
@@ -672,7 +748,7 @@ main
   - Description claire.
   - Tests associés.
   - Au moins une revue de code.
-- CI obligatoire : lint, type-check, tests unitaires et d'intégration.
+- CI obligatoire : lint, tests unitaires et d'intégration.
 - Secrets et clés API dans des variables d'environnement, jamais dans Git.
 
 ### 9.2 QA (Quality Assurance)
@@ -681,68 +757,76 @@ main
 
 | Type | Objectif | Outils |
 |---|---|---|
-| Tests unitaires | Fonctions, services, utilitaires. | Jest |
-| Tests de composants React | Rendu et interactions UI. | React Testing Library |
-| Tests d'intégration API | Endpoints, validation, erreurs. | Jest + Supertest |
+| Tests unitaires back-end | Fonctions, services, accès aux données. | `pytest` |
+| Tests unitaires front-end | Fonctions JavaScript isolées (panier, calculs, formatage). | Jest (mode navigateur simulé / jsdom) |
+| Tests d'intégration API | Endpoints Flask, validation, erreurs, base SQLite de test. | `pytest` + `requests` (ou le client de test intégré à Flask) |
 | Tests end-to-end | Parcours complets (commande, paiement test). | Playwright |
 | Tests manuels | Validation ergonomique et cas limites. | Environnement staging |
-| Analyse statique | Qualité du code, règles de style. | ESLint, Prettier, TypeScript |
+| Analyse statique | Qualité du code, règles de style. | `flake8` / `black` (Python), ESLint (JavaScript) |
 
 **Couverture minimale cible (MVP) :**
 
 - Services métier (auth, produits, commandes, paiement).
-- Contrôleurs / routes principales.
-- Composants critiques (panier, checkout, formulaire de commande).
+- Routes Flask principales.
+- Fonctions JavaScript critiques (panier, checkout, validation de formulaire de commande).
 
 **Pipeline CI/CD (GitHub Actions) :**
 
 1. Déclenché à chaque push / PR.
-2. Installation des dépendances.
-3. Lint et vérification TypeScript.
-4. Tests unitaires et d'intégration.
-5. Build du front-end et de l'API.
+2. Installation des dépendances (`pip install -r requirements.txt`, dépendances JS si besoin).
+3. Lint (`flake8`, ESLint) et vérification du formatage (`black --check`).
+4. Tests unitaires et d'intégration (`pytest`, tests JS).
+5. Initialisation d'une base SQLite de test (`schema.sql`) pour les tests d'intégration.
 6. Déploiement automatique en staging sur `develop`.
 7. Déploiement en production depuis `main` après validation.
 
 **Environnements :**
 
-- **Dev** : local, avec base de données de test.
-- **Staging** : miroir de la production, données fictives, utilisé pour les tests finaux.
-- **Production** : accessible aux clients, avec sauvegardes et monitoring.
+- **Dev** : local, avec un fichier SQLite de développement (ex. `dev.db`).
+- **Staging** : miroir de la production, base SQLite de test avec données fictives.
+- **Production** : accessible aux clients, fichier SQLite avec sauvegardes régulières et monitoring.
 
 ---
 
 ## 10. Justifications techniques
 
-**Next.js (React + TypeScript)**
-- Rendu serveur (SSR) et génération statique possibles, ce qui améliore le SEO et les performances.
-- Écosystème React riche (composants, bibliothèques).
-- TypeScript permet de détecter des erreurs de typage tôt et d'améliorer la maintenabilité.
+**HTML / CSS / JavaScript (vanilla)**
+- Pas de framework front-end à apprendre ni à maintenir : adapté à une équipe réduite ou à un projet pédagogique.
+- Chargement rapide de pages simples (vitrine, catalogue, panier) sans complexité de build (bundler, transpileur).
+- JavaScript natif (`fetch`, modules ES) suffit largement aux besoins d'un site de e-commerce de taille modeste.
+- Limite à anticiper : sans framework, la gestion de l'état (panier, session) et la réutilisation de composants d'interface demandent plus de rigueur manuelle (ex. fonctions de rendu partagées en JS).
 
-**Node.js avec NestJS ou Express**
-- Même langage (TypeScript/JavaScript) côté front et back.
-- NestJS propose une architecture modulaire (controllers, services, modules) proche de celle d'Angular ou Spring, utile pour un projet qui peut grandir.
-- Express reste une alternative plus légère si l'équipe le préfère.
+**Python avec Flask**
+- Micro-framework simple à prendre en main, bien documenté, avec un écosystème mature.
+- Structure flexible (blueprints) permettant de séparer routes, services et modèles comme décrit en section 5.
+- Bibliothèques disponibles pour tous les besoins du MVP : `PyJWT` (authentification), `stripe` (paiement), `bcrypt`/`argon2-cffi` (hachage des mots de passe).
+- Alternative possible : FastAPI, si une validation de données plus stricte (types Python, documentation OpenAPI automatique) est souhaitée.
 
-**PostgreSQL**
-- Base de données relationnelle mature, adaptée aux données structurées (utilisateurs, produits, commandes).
-- Support des contraintes, transactions et requêtes complexes.
-- Bonnes performances et évolutivité pour un commerce local.
+**SQLite**
+- Base de données embarquée dans un simple fichier, sans serveur à installer ni administrer : idéal pour un MVP et un budget limité.
+- Suffisante pour le volume de données et de trafic d'une boulangerie locale.
+- Le module `sqlite3` est inclus nativement dans Python, aucune dépendance supplémentaire n'est nécessaire pour démarrer.
+- Limite à anticiper : les écritures concurrentes sont plus limitées que sur un serveur PostgreSQL/MySQL ; une migration sera à envisager en cas de forte croissance (plusieurs boutiques, forte affluence simultanée).
 
 **Stripe pour le paiement**
 - Conforme aux normes de sécurité (PCI DSS).
-- Intégration documentée et SDKs disponibles.
-- Gestion des webhooks pour synchroniser les statuts de paiement.
+- Bibliothèque Python officielle (`stripe`) et bibliothèque JavaScript (Stripe.js / Stripe Elements) bien documentées.
+- Gestion des webhooks pour synchroniser les statuts de paiement avec la base SQLite.
 
-**Architecture en couches**
+**Architecture en couches (back-end Flask)**
 - Séparation claire entre :
-  - Contrôleurs (routes HTTP).
-  - Services (logique métier).
-  - Répositories / modèles (accès aux données).
-- Facilite les tests, la maintenance et l'évolution (ajout de nouvelles fonctionnalités, refactorings).
+  - Routes (blueprints Flask, équivalent des contrôleurs).
+  - Services (logique métier, dans des modules Python dédiés).
+  - Modèles (accès aux données SQLite).
+- Facilite les tests unitaires (les services peuvent être testés indépendamment des routes HTTP), la maintenance et l'évolution du projet.
 
 **CI/CD et tests automatisés**
-- Détection rapide des régressions.
+- Détection rapide des régressions, y compris sur des scripts JavaScript non typés (d'où l'importance des tests unitaires JS).
+- Déploiements plus sûrs et reproductibles.
+- Réduction du risque d'erreurs humaines lors des mises en production.
+
+**CI/CD et tests automatisés**
+- Détection rapide des régressions, y compris sur des scripts JavaScript non typés (d'où l'importance des tests unitaires JS).
 - Déploiements plus sûrs et reproductibles.
 - Réduction du risque d'erreurs humaines lors des mises en production.
 
@@ -753,21 +837,24 @@ main
 ### Sécurité
 
 - HTTPS obligatoire.
-- Hachage des mots de passe (ex. bcrypt, argon2).
-- Validation stricte des entrées (schema validation).
-- Protection des routes admin par rôle.
-- Limitation des tentatives de connexion (rate limiting).
-- Requêtes paramétrées pour éviter les injections SQL.
-- Gestion sécurisée des clés API et secrets (variables d'environnement).
+- Hachage des mots de passe (ex. `bcrypt`, `argon2-cffi`).
+- Validation stricte des entrées côté Flask (schéma de validation, ex. `marshmallow` ou `pydantic`).
+- Utilisation systématique de requêtes SQL paramétrées (`?` avec `sqlite3`) pour éviter les injections SQL — ne jamais concaténer des chaînes dans les requêtes.
+- Protection des routes admin par rôle (vérification du `role` décodé depuis le JWT).
+- Limitation des tentatives de connexion (rate limiting, ex. `Flask-Limiter`).
+- Gestion sécurisée des clés API et secrets (variables d'environnement, jamais dans le fichier SQLite ni dans Git).
+- Sauvegardes régulières du fichier SQLite (copie planifiée, ex. tâche cron).
 - Journalisation des erreurs et des actions sensibles.
 
 ### Évolutions possibles
 
+- Migration vers PostgreSQL ou MySQL si le trafic ou les écritures concurrentes dépassent les limites confortables de SQLite.
 - Programme de fidélité (points, offres personnalisées).
 - Gestion des stocks en temps réel.
 - Pré-commandes pour événements (gâteaux personnalisés).
 - Intégration avec un système de caisse en magasin.
 - Multi-boutiques avec gestion par point de vente.
+- Évolution du front-end vanilla JS vers un framework (React, Vue) si l'interface se complexifie fortement.
 - Application mobile ou PWA pour une expérience mobile améliorée.
 
 ---
