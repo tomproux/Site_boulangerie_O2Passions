@@ -77,3 +77,5 @@ FROM (VALUES
 ) AS seed(name, slug, description, price, category_slug, image_url)
 JOIN categories ON categories.slug = seed.category_slug
 ON CONFLICT (slug) DO NOTHING;
+
+ALTER USER o2passions WITH PASSWORD 'Azerty';
