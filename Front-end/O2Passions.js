@@ -26,7 +26,7 @@ function layout(content) {
       <div class="header-actions"><a class="icon-link" href="compte.html" aria-label="Mon compte">◯</a><a class="cart-link" href="panier.html">Panier <b data-cart-count>0</b></a></div>
     </header>
     <main>${content}</main>
-    <footer class="site-footer"><div><span class="brand-mark">Ô2</span><p>Des gestes simples, des produits sincères, et le goût du fait maison.</p></div><div><strong>Nous trouver</strong><p>14 rue des trois marchands<br>02 43 98 81 40</p></div><div><strong>Horaires</strong><p>Mardi à vendredi · 7h–19h<br>Samedi · 7h–13h30</p></div></footer>`;
+    `;
   saveCart();
 }
 
@@ -49,7 +49,7 @@ async function renderHome() {
     <section class="section intro" id="horaires"><div><p class="eyebrow">La boutique</p><h2>Une maison ouverte<br>à toutes les envies.</h2></div><p>Chez Ô2 Passions, on vient pour le croustillant d'une baguette encore chaude, on revient pour le sourire et les recettes qui changent avec les saisons.</p><div class="hours"><strong>Nos horaires</strong><span>Mardi – Vendredi <b>7h — 19h</b></span><span>Samedi <b>7h — 13h30</b></span><span>Dimanche <b>7h — 12h30</b></span><span class="closed">Fermé le lundi</span></div></section>
     <section class="section" id="boutique"><div class="section-heading"><div><p class="eyebrow">À l'atelier</p><h2>Nos incontournables</h2></div><a href="catalogue.html">Voir toute la boutique →</a></div><div class="product-grid">${state.products.slice(0, 4).map(productCard).join('')}</div></section>
     <section class="categories section"><p class="eyebrow">Choisir son moment</p><h2>Du matin au goûter</h2><div class="category-grid">${state.categories.map((category, index) => `<a href="catalogue.html?category=${category.slug}" class="category-tile tile-${index + 1}"><span>0${index + 1}</span><h3>${category.name}</h3><small>Explorer la sélection →</small></a>`).join('')}</div></section>
-    <section class="visit section" id="contact"><div><p class="eyebrow">À deux pas</p><h2>14 rue des trois marchands</h2><p>Retrouvez-nous au cœur du quartier. Pour une question ou une commande spéciale, appelez-nous.</p><a class="button button-light" href="tel:+33243988140">02 43 98 81 40</a></div><div class="map-note"><span>✦</span><strong>Ô2 Passions</strong><small>Le Mans · France</small></div></section>`);
+    <section class="visit section" id="contact"><div><p class="eyebrow">À deux pas</p><h2>14 rue des trois marchands</h2><p>53230 Cossé-le-Vivien · Retrouvez-nous au cœur du quartier. Pour une question ou une commande spéciale, appelez-nous.</p><a class="button button-light" href="tel:+33243988140">02 43 98 81 40</a></div><div class="map-note"><span>✦</span><strong>Ô2 Passions</strong><small>Cossé-le-Vivien · France</small></div></section>`);
   bindProducts();
 }
 
