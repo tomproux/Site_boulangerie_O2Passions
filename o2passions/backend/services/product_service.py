@@ -39,7 +39,13 @@ def create_product(data):
 
     if not name:
         raise ProductError("Le nom du produit est obligatoire.")
-    if price is None or float(price) < 0:
+    if price is None:
+        raise ProductError("Le prix est obligatoire.")
+    try:
+        price = float(price)
+    except (TypeError, ValueError):
+        raise ProductError("Le prix doit être un nombre positif.")
+    if price < 0:
         raise ProductError("Le prix doit être un nombre positif.")
     if not category_id or not Category.find_by_id(category_id):
         raise ProductError("Catégorie invalide.", "INVALID_CATEGORY", 400)
@@ -64,9 +70,13 @@ def update_product(product_id, data):
     if "description" in data:
         fields["description"] = data["description"]
     if "price" in data:
-        if float(data["price"]) < 0:
+        try:
+            price = float(data["price"])
+        except (TypeError, ValueError):
             raise ProductError("Le prix doit être un nombre positif.")
-        fields["price"] = data["price"]
+        if price < 0:
+            raise ProductError("Le prix doit être un nombre positif.")
+        fields["price"] = price
     if "categoryId" in data:
         if not Category.find_by_id(data["categoryId"]):
             raise ProductError("Catégorie invalide.", "INVALID_CATEGORY", 400)

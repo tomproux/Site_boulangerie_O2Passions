@@ -42,7 +42,10 @@ def create_order(user_id, data):
     total = 0.0
     for item in items:
         product = Product.find_by_id(item.get("productId"))
-        quantity = int(item.get("quantity", 0))
+        try:
+            quantity = int(item.get("quantity", 0))
+        except (TypeError, ValueError):
+            raise OrderError("Quantité invalide.", "INVALID_QUANTITY", 400)
         if not product:
             raise OrderError("Un produit du panier est introuvable.", "PRODUCT_NOT_FOUND", 404)
         if not product["is_available"]:

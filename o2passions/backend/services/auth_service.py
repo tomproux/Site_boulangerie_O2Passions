@@ -30,6 +30,17 @@ def _validate_password(password):
         )
 
 
+def _public_user(user):
+    return {
+        "id": user["id"],
+        "email": user["email"],
+        "firstName": user["first_name"],
+        "lastName": user["last_name"],
+        "phone": user["phone"],
+        "role": user["role"],
+    }
+
+
 def register(email, password, first_name, last_name, phone=None):
     if not email or not EMAIL_RE.match(email):
         raise AuthError("Adresse e-mail invalide.", "INVALID_EMAIL", 400)
@@ -42,7 +53,7 @@ def register(email, password, first_name, last_name, phone=None):
 
     user = User.create_user(email, password, first_name, last_name, phone)
     token = generate_token(user["id"], role="CUSTOMER")
-    return user, token
+    return _public_user(user), token
 
 
 def login(email, password):
@@ -51,15 +62,7 @@ def login(email, password):
         raise AuthError("E-mail ou mot de passe incorrect.", "INVALID_CREDENTIALS", 401)
 
     token = generate_token(user["id"], role=user["role"])
-    public_user = {
-        "id": user["id"],
-        "email": user["email"],
-        "firstName": user["first_name"],
-        "lastName": user["last_name"],
-        "phone": user["phone"],
-        "role": user["role"],
-    }
-    return public_user, token
+    return _public_user(user), token
 
 
 def generate_token(user_id, role):

@@ -7,6 +7,14 @@ from flask import g, jsonify, request
 from services.auth_service import AuthError, validate_token
 
 
+def error_response(code, message, status, details=None):
+    return jsonify({"error": {"code": code, "message": message, "details": details or []}}), status
+
+
+def success_response(data, message="Opération effectuée avec succès", status=200):
+    return jsonify({"data": data, "message": message}), status
+
+
 def _extract_token():
     header = request.headers.get("Authorization", "")
     if header.startswith("Bearer "):
@@ -38,11 +46,3 @@ def admin_required(fn):
             return error_response("FORBIDDEN", "Accès réservé aux administrateurs.", 403)
         return fn(*args, **kwargs)
     return wrapper
-
-
-def error_response(code, message, status, details=None):
-    return jsonify({"error": {"code": code, "message": message, "details": details or []}}), status
-
-
-def success_response(data, message="Operation completed successfully", status=200):
-    return jsonify({"data": data, "message": message}), status
