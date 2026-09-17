@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tableau de bord — Administration O2Passions</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script>window.O2_API_BASE = 'http://localhost:5000/api';</script>
+</head>
+<body class="admin">
+
+  <header class="entete entete-admin">
+    <div class="conteneur">
+      <a href="index.html" class="logo">O2Passions · Admin</a>
+      <nav class="nav-principale">
+        <a href="index.html" class="actif">Tableau de bord</a>
+        <a href="produits.html">Produits</a>
+        <a href="commandes.html">Commandes</a>
+        <a href="parametres.html">Paramètres</a>
+        <span data-zone-admin></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="conteneur">
+      <h1 class="mb-32">Tableau de bord</h1>
+      <div class="grille-stats" id="grille-stats">
+        <p class="chargement">Chargement…</p>
+      </div>
+
+      <div class="encart">
+        <h2 style="font-size:1.2rem">Accès rapide</h2>
+        <div class="barre-actions">
+          <a class="btn" href="commandes.html">Gérer les commandes</a>
+          <a class="btn btn-secondaire" href="produits.html">Gérer le catalogue</a>
+          <a class="btn btn-secondaire" href="parametres.html">Horaires &amp; boutique</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { exigerAdmin, initialiserNavigationAdmin } from './js/admin-products.js';
+    import { chargerStatistiques } from './js/admin-orders.js';
+    if (exigerAdmin()) {
+      initialiserNavigationAdmin();
+      chargerStatistiques();
+    }
+  </script>
+</body>
+</html>

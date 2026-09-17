@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commandes — Administration O2Passions</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script>window.O2_API_BASE = 'http://localhost:5000/api';</script>
+</head>
+<body class="admin">
+
+  <header class="entete entete-admin">
+    <div class="conteneur">
+      <a href="index.html" class="logo">O2Passions · Admin</a>
+      <nav class="nav-principale">
+        <a href="index.html">Tableau de bord</a>
+        <a href="produits.html">Produits</a>
+        <a href="commandes.html" class="actif">Commandes</a>
+        <a href="parametres.html">Paramètres</a>
+        <span data-zone-admin></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="conteneur">
+      <h1 class="mb-32">Commandes</h1>
+      <p id="message" class="message" style="display:none"></p>
+
+      <div class="barre-filtres">
+        <div class="champ">
+          <label for="filtre-statut">Statut</label>
+          <select id="filtre-statut"></select>
+        </div>
+        <div class="champ">
+          <label for="filtre-mode">Mode de réception</label>
+          <select id="filtre-mode">
+            <option value="">Tous</option>
+            <option value="PICKUP">Retrait en boutique</option>
+            <option value="DELIVERY">Livraison</option>
+          </select>
+        </div>
+        <div class="champ">
+          <label for="filtre-date-debut">Du</label>
+          <input type="date" id="filtre-date-debut">
+        </div>
+        <div class="champ">
+          <label for="filtre-date-fin">Au</label>
+          <input type="date" id="filtre-date-fin">
+        </div>
+        <button class="btn btn-secondaire" id="bouton-reinitialiser">Réinitialiser</button>
+      </div>
+
+      <div id="tableau-commandes"></div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { exigerAdmin, initialiserNavigationAdmin } from './js/admin-products.js';
+    import { chargerCommandes, initialiserFiltres } from './js/admin-orders.js';
+    if (exigerAdmin()) {
+      initialiserNavigationAdmin();
+      initialiserFiltres();
+      chargerCommandes();
+    }
+  </script>
+</body>
+</html>

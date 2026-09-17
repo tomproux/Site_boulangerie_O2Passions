@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paramètres — Administration O2Passions</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script>window.O2_API_BASE = 'http://localhost:5000/api';</script>
+</head>
+<body class="admin">
+
+  <header class="entete entete-admin">
+    <div class="conteneur">
+      <a href="index.html" class="logo">O2Passions · Admin</a>
+      <nav class="nav-principale">
+        <a href="index.html">Tableau de bord</a>
+        <a href="produits.html">Produits</a>
+        <a href="commandes.html">Commandes</a>
+        <a href="parametres.html" class="actif">Paramètres</a>
+        <span data-zone-admin></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="conteneur" style="max-width:720px">
+      <h1 class="mb-32">Paramètres de la boutique</h1>
+      <p id="message" class="message" style="display:none"></p>
+
+      <form id="formulaire-parametres" class="encart">
+        <h2 style="font-size:1.2rem">Informations</h2>
+        <div class="champ">
+          <label for="shopName">Nom de la boutique</label>
+          <input type="text" id="shopName" name="shopName">
+        </div>
+        <div class="champ">
+          <label for="address">Adresse</label>
+          <input type="text" id="address" name="address">
+        </div>
+        <div class="champ">
+          <label for="phone">Téléphone</label>
+          <input type="tel" id="phone" name="phone">
+        </div>
+        <div class="champ">
+          <label for="mapUrl">Lien vers la carte (Google Maps)</label>
+          <input type="text" id="mapUrl" name="mapUrl">
+        </div>
+        <div class="champ">
+          <label for="aboutText">Texte « À propos »</label>
+          <textarea id="aboutText" name="aboutText"></textarea>
+        </div>
+
+        <h2 style="font-size:1.2rem;margin-top:28px">Horaires d'ouverture</h2>
+        <div id="champs-horaires"></div>
+
+        <button type="submit" class="btn" style="margin-top:12px">Enregistrer</button>
+      </form>
+    </div>
+  </main>
+
+  <script type="module">
+    import { api, ApiError, afficherMessage, echapper } from '../js/api.js';
+    import { exigerAdmin, initialiserNavigationAdmin } from './js/admin-products.js';
+
+    const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+
+    if (exigerAdmin()) {
+      initialiserNavigationAdmin();
+
+      const formulaire = document.getElementById('formulaire-parametres');
+      const zoneHoraires = document.getElementById('champs-horaires');
+
+      zoneHoraires.innerHTML = JOURS.map((jour) => `
+        <div class="champ">
+          <label for="horaire-${jour}" style="text-transform:capitalize">${jour}</label>
+          <input type="text" id="horaire-${jour}" data-jour="${jour}" placeholder="ex. 7h-19h ou Fermé">
+        </div>`).join('');
+
+      try {
+        const infos = await api.get('/admin/shop-settings');
+        formulaire.shopName.value = infos.shop_name || '';
+        formulaire.address.value = infos.address || '';
+        formulaire.phone.value = infos.phone || '';
+        formulaire.mapUrl.value = infos.map_url || '';
+        formulaire.aboutText.value = infos.about_text || '';
+        const horaires = infos.opening_hours || {};
+        JOURS.forEach((jour) => {
+          const champ = document.getElementById(`horaire-${jour}`);
+          if (champ) champ.value = horaires[jour] || '';
+        });
+      } catch (e) {
+        afficherMessage('#message', 'Impossible de charger les paramètres.');
+      }
+
+      formulaire.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        afficherMessage('#message', '');
+
+        const openingHours = {};
+        JOURS.forEach((jour) => {
+          const valeur = document.getElementById(`horaire-${jour}`).value.trim();
+          if (valeur) openingHours[jour] = valeur;
+        });
+
+        try {
+          await api.patch('/admin/shop-settings', {
+            shopName: formulaire.shopName.value.trim(),
+            address: formulaire.address.value.trim(),
+            phone: formulaire.phone.value.trim(),
+            mapUrl: formulaire.mapUrl.value.trim(),
+            aboutText: formulaire.aboutText.value.trim(),
+            openingHours,
+          });
+          afficherMessage('#message', 'Paramètres enregistrés.', 'succes');
+        } catch (erreur) {
+          afficherMessage('#message', erreur instanceof ApiError ? erreur.message : 'Erreur inattendue.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

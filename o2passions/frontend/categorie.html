@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nos produits — O2Passions</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>window.O2_API_BASE = 'http://localhost:5000/api';</script>
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a href="index.html" class="logo">O2Passions</a>
+      <nav class="nav-principale">
+        <a href="index.html">Accueil</a>
+        <a href="categorie.html" class="actif">Nos produits</a>
+        <a href="index.html#horaires">Horaires</a>
+        <a href="panier.html">Panier<span class="compteur-panier" data-compteur-panier style="display:none">0</span></a>
+        <span data-zone-compte></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="conteneur">
+      <h1 id="titre-categorie">Nos produits</h1>
+      <div class="liste-categories mb-32" id="filtres-categories" style="justify-content:flex-start"></div>
+      <div class="grille-produits" id="grille-produits">
+        <p class="chargement">Chargement…</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <div class="pied-bas">© 2026 O2Passions — Tous droits réservés.</div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initialiserPageCategorie } from './js/products.js';
+    import './js/auth.js';
+    initialiserPageCategorie();
+  </script>
+</body>
+</html>

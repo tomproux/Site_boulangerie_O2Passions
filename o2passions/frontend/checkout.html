@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commander — O2Passions</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    window.O2_API_BASE = 'http://localhost:5000/api';
+    // Renseigner la clé publique Stripe pour activer le paiement réel.
+    // Laissée vide, le parcours fonctionne en mode démonstration.
+    window.O2_STRIPE_PUBLIC_KEY = '';
+  </script>
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a href="index.html" class="logo">O2Passions</a>
+      <nav class="nav-principale">
+        <a href="index.html">Accueil</a>
+        <a href="categorie.html">Nos produits</a>
+        <a href="panier.html">Panier<span class="compteur-panier" data-compteur-panier style="display:none">0</span></a>
+        <span data-zone-compte></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="conteneur" id="zone-checkout">
+      <h1 class="mb-32">Finaliser ma commande</h1>
+      <p id="message" class="message" style="display:none"></p>
+
+      <div class="grille-checkout">
+        <form id="formulaire-commande" class="encart">
+          <h2 style="font-size:1.2rem">Mode de réception</h2>
+          <div class="groupe-options mb-32">
+            <label class="option-radio">
+              <input type="radio" name="receptionMode" value="PICKUP" checked>
+              Retrait en boutique
+            </label>
+            <label class="option-radio">
+              <input type="radio" name="receptionMode" value="DELIVERY">
+              Livraison locale
+            </label>
+          </div>
+
+          <h2 style="font-size:1.2rem">Date et créneau</h2>
+          <div class="champ">
+            <label for="scheduledDate">Date souhaitée</label>
+            <input type="date" id="scheduledDate" name="scheduledDate" required>
+          </div>
+          <div class="champ">
+            <label for="scheduledTimeSlot">Créneau horaire</label>
+            <select id="scheduledTimeSlot" name="scheduledTimeSlot" required></select>
+          </div>
+
+          <div id="zone-adresse" class="cache">
+            <h2 style="font-size:1.2rem">Adresse de livraison</h2>
+            <div class="champ">
+              <label for="deliveryAddress">Adresse complète</label>
+              <textarea id="deliveryAddress" name="deliveryAddress" placeholder="Numéro, rue, code postal, ville"></textarea>
+            </div>
+          </div>
+
+          <h2 style="font-size:1.2rem">Paiement</h2>
+          <p class="texte-doux" style="font-size:0.9rem">
+            Le paiement est traité de manière sécurisée par Stripe. Aucune donnée
+            bancaire n'est stockée sur nos serveurs.
+          </p>
+          <div id="stripe-card-element" style="margin:16px 0"></div>
+
+          <button type="submit" class="btn" id="bouton-payer" style="width:100%">Confirmer et payer</button>
+        </form>
+
+        <aside class="encart">
+          <h2 style="font-size:1.2rem">Récapitulatif</h2>
+          <p class="texte-doux" style="font-size:0.9rem">Client : <span id="nom-client"></span></p>
+          <div id="recapitulatif"></div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <div class="pied-bas">© 2026 O2Passions — Tous droits réservés.</div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/checkout.js"></script>
+</body>
+</html>

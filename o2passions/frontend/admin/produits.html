@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produits — Administration O2Passions</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script>window.O2_API_BASE = 'http://localhost:5000/api';</script>
+</head>
+<body class="admin">
+
+  <header class="entete entete-admin">
+    <div class="conteneur">
+      <a href="index.html" class="logo">O2Passions · Admin</a>
+      <nav class="nav-principale">
+        <a href="index.html">Tableau de bord</a>
+        <a href="produits.html" class="actif">Produits</a>
+        <a href="commandes.html">Commandes</a>
+        <a href="parametres.html">Paramètres</a>
+        <span data-zone-admin></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="conteneur">
+      <div class="entre-deux mb-32">
+        <h1 class="mt-0" style="margin-bottom:0">Catalogue produits</h1>
+        <button class="btn" id="bouton-ajouter">Ajouter un produit</button>
+      </div>
+      <p id="message" class="message" style="display:none"></p>
+      <div id="tableau-produits"></div>
+    </div>
+  </main>
+
+  <div class="modale cache" id="modale-produit">
+    <div class="modale-contenu">
+      <h2 id="titre-modale" style="font-size:1.3rem">Ajouter un produit</h2>
+      <p id="message-modale" class="message" style="display:none"></p>
+      <form id="formulaire-produit">
+        <div class="champ">
+          <label for="name">Nom du produit</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="champ">
+          <label for="description">Description</label>
+          <textarea id="description" name="description"></textarea>
+        </div>
+        <div class="champ">
+          <label for="price">Prix (EUR)</label>
+          <input type="number" id="price" name="price" step="0.01" min="0" required>
+        </div>
+        <div class="champ">
+          <label for="categoryId">Catégorie</label>
+          <select id="categoryId" name="categoryId" required></select>
+        </div>
+        <div class="champ">
+          <label for="imageUrl">URL de l'image</label>
+          <input type="text" id="imageUrl" name="imageUrl" placeholder="/images/mon-produit.jpg">
+        </div>
+        <div class="champ">
+          <label style="font-weight:400">
+            <input type="checkbox" id="isAvailable" name="isAvailable" checked>
+            Produit disponible à la vente
+          </label>
+        </div>
+        <div class="barre-actions">
+          <button type="submit" class="btn">Enregistrer</button>
+          <button type="button" class="btn btn-secondaire" id="bouton-annuler">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { exigerAdmin, initialiserNavigationAdmin, chargerProduits, initialiserFormulaireProduit } from './js/admin-products.js';
+    if (exigerAdmin()) {
+      initialiserNavigationAdmin();
+      await chargerProduits();
+      initialiserFormulaireProduit();
+    }
+  </script>
+</body>
+</html>

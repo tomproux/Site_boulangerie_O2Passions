@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O2Passions — Boulangerie-pâtisserie artisanale</title>
+  <meta name="description" content="O2Passions, boulangerie-pâtisserie artisanale : pains au levain, viennoiseries, pâtisseries et traiteur. Commandez en ligne pour un retrait en boutique ou une livraison.">
+  <link rel="stylesheet" href="css/style.css">
+  <script>window.O2_API_BASE = 'http://localhost:5000/api';</script>
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a href="index.html" class="logo">O2Passions</a>
+      <nav class="nav-principale">
+        <a href="index.html" class="actif">Accueil</a>
+        <a href="categorie.html">Nos produits</a>
+        <a href="#horaires">Horaires</a>
+        <a href="panier.html">Panier<span class="compteur-panier" data-compteur-panier style="display:none">0</span></a>
+        <span data-zone-compte></span>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="banniere">
+      <div class="conteneur">
+        <h1>Le goût du pain, tous les jours</h1>
+        <p>Pains au levain, viennoiseries pur beurre et pâtisseries préparées chaque matin dans notre fournil. Commandez en ligne, retirez en boutique ou faites-vous livrer.</p>
+        <a href="categorie.html" class="btn">Découvrir nos produits</a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="conteneur">
+        <div class="section-titre">
+          <h2>Nos catégories</h2>
+        </div>
+        <div class="liste-categories" id="liste-categories"></div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="conteneur">
+        <div class="section-titre">
+          <h2>Nos produits phares</h2>
+        </div>
+        <div class="grille-produits" id="produits-phares">
+          <p class="chargement">Chargement…</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="horaires">
+      <div class="conteneur">
+        <div class="grille-infos">
+          <div>
+            <h2>Horaires d'ouverture</h2>
+            <ul class="liste-horaires" data-boutique-horaires></ul>
+          </div>
+          <div>
+            <h2>Nous trouver</h2>
+            <p data-boutique-adresse></p>
+            <p>Téléphone : <span data-boutique-telephone></span></p>
+            <a class="btn btn-secondaire" data-boutique-carte href="#" target="_blank" rel="noopener">Voir sur la carte</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="conteneur" style="max-width:760px">
+        <div class="section-titre">
+          <h2>À propos</h2>
+        </div>
+        <p class="texte-centre" data-boutique-apropos></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <div class="pied-colonnes">
+        <div>
+          <h4>O2Passions</h4>
+          <p style="font-size:0.9rem" data-boutique-adresse></p>
+          <p style="font-size:0.9rem"><span data-boutique-telephone></span></p>
+        </div>
+        <div>
+          <h4>Boutique</h4>
+          <ul>
+            <li><a href="categorie.html">Nos produits</a></li>
+            <li><a href="panier.html">Mon panier</a></li>
+            <li><a href="compte.html">Mon espace</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Informations</h4>
+          <ul>
+            <li><a href="#horaires">Horaires &amp; localisation</a></li>
+            <li><a href="#">Conditions générales de vente</a></li>
+            <li><a href="#">Mentions légales</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="pied-bas">© 2026 O2Passions — Tous droits réservés.</div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { chargerProduitsPhares, chargerCategories, chargerInfosBoutique } from './js/products.js';
+    import './js/auth.js';
+
+    chargerCategories();
+    chargerProduitsPhares();
+    chargerInfosBoutique();
+  </script>
+</body>
+</html>

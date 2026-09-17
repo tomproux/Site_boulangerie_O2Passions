@@ -1,0 +1,21 @@
+{
+  "name": "o2passions-frontend",
+  "version": "1.0.0",
+  "description": "Front-end O2Passions — HTML/CSS/JavaScript vanilla",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "lint": "eslint js admin/js tests",
+    "serve": "python3 -m http.server 5500"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "eslint": "^8.57.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transform": {}
+  }
+}
